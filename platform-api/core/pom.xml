@@ -13,4 +13,5 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>JNesto Platform Core</name>
+    <version>0.0.1-SNAPSHOT</version>
 </project>
