@@ -15,14 +15,29 @@
     <name>JNesto Platform Windows</name>
     <dependencies>
         <dependency>
-            <groupId>net.java.dev.flexdock</groupId>
-            <artifactId>flexdock</artifactId>
-            <version>0.4</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jnesto-platform-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flexdock</groupId>
+            <artifactId>flexdock-core</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flexdock</groupId>
+            <artifactId>flexdock-view</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flexdock</groupId>
+            <artifactId>flexdock-perspective</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flexdock</groupId>
+            <artifactId>flexdock-drag</artifactId>
+            <version>1.2.3</version>
         </dependency>
     </dependencies>
     <version>0.0.1-SNAPSHOT</version>
