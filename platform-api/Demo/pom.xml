@@ -8,8 +8,5 @@
     </parent>
     <artifactId>Demo</artifactId>
     <packaging>pom</packaging>
-    <modules>
-        <module>DesktopDemo</module>
-        <module>Plugin01</module>
-    </modules>
+    <modules></modules>
 </project>
