@@ -5,6 +5,7 @@
  */
 package com.jnesto.platform.plugin;
 
+import com.jnesto.platform.demo.api.ActionAPI;
 import com.jnesto.platform.lookup.ServiceProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +22,7 @@ import ro.fortsoft.pf4j.Extension;
         service = {ActionListener.class}
 )
 @Extension
-public class ExternalExtensionPoint implements ActionListener {
+public class ExternalExtensionPoint implements ActionAPI {
     private final Logger log = LoggerFactory.getLogger(ExternalExtensionPoint.class);
     
     @Override
