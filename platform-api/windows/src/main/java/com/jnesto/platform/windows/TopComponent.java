@@ -15,9 +15,6 @@
  */
 package com.jnesto.platform.windows;
 
-import com.jnesto.platform.lookup.ServiceProvider;
-import java.io.IOException;
-import java.io.InputStream;
 import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -26,8 +23,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 /**

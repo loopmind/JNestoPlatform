@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Plugin-Dependencies: 
+Plugin-Id: external-plugin
+Archiver-Version: Plexus Archiver
+Built-By: flavio
+Plugin-Provider: Flavio de Vasconcellos Correa
+Plugin-Version: 0.0.1
+Plugin-Class: com.jnesto.platform.plugin.ExternalPlugin
+Created-By: Apache Maven 3.0.5
+Build-Jdk: 1.8.0_121
+

@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.jnesto</groupId>
         <artifactId>jnesto-platform</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>jnesto-platform-core</artifactId>
     <packaging>jar</packaging>
@@ -14,4 +14,31 @@
     </properties>
     <name>JNesto Platform Core</name>
     <version>0.0.1-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.20</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>ro.fortsoft.pf4j</groupId>
+            <artifactId>pf4j</artifactId>
+            <version>1.2.0</version>
+        </dependency> 
+        
+    </dependencies>
+    
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
