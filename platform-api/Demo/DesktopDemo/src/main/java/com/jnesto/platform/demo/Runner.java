@@ -34,7 +34,9 @@ public class Runner {
     static public void start() {
         pm = Lookup.lookup(PluginManager.class);
         if (pm != null) {
+
             pm.loadPlugins();
+            
             pm.startPlugins();
 
 //            pm.startPlugin("external-plugin");

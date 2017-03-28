@@ -7,17 +7,18 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     
-    <artifactId>Plugin01</artifactId>
+    <artifactId>common-plugin</artifactId>
     <packaging>jar</packaging>
     
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <plugin.id>external-plugin</plugin.id>
-        <plugin.class>com.jnesto.platform.plugin.ExternalPlugin</plugin.class>
-        <plugin.version>0.0.1</plugin.version>
-        <plugin.packaging>SNAPSHOT</plugin.packaging>
-        <plugin.provider>Flavio de Vasconcellos Correa</plugin.provider>
+        <plugin.class>com.jnesto.platform.plugin.CommonPlugin</plugin.class>
+        <plugin.id>${project.artifactId}</plugin.id>
+        <plugin.description>${project.description}</plugin.description>
+        <plugin.version>${project.version}</plugin.version>
+        <plugin.provider>jnesto.com</plugin.provider>
+        <plugin.requires>1.0.0-SNAPSHOT</plugin.requires>
         <plugin.dependencies />
     </properties>
 
@@ -73,11 +74,13 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Plugin-Id>${plugin.id}</Plugin-Id>
-                            <Plugin-Class>${plugin.class}</Plugin-Class>
-                            <Plugin-Version>${plugin.version}</Plugin-Version>
-                            <Plugin-Provider>${plugin.provider}</Plugin-Provider>
-                            <Plugin-Dependencies>${plugin.dependencies}</Plugin-Dependencies>
+                            <plugin-id>${plugin.id}</plugin-id>
+                            <plugin-class>${plugin.class}</plugin-class>
+                            <plugin-version>${plugin.version}</plugin-version>
+                            <plugin-provider>${plugin.provider}</plugin-provider>
+                            <plugin-dependencies>${plugin.dependencies}</plugin-dependencies>
+                            <plugin-description>${plugin.description}</plugin-description>
+                            <plugin-requires>${plugin.requires}</plugin-requires>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -104,4 +107,6 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <description>Implementa funções de uso comum aos componentes da aplicação.</description>
+    <name>Common Plugin</name>
 </project>

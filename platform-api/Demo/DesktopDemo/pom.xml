@@ -9,7 +9,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jnesto-platform-demo-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>JNesto App</name>
 
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jnesto-platform-core</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
