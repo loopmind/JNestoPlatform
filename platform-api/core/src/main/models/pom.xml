@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <artifactId>plugin-id</artifactId>
+    <packaging>jar</packaging>
+    
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <plugin.class>my.package.class</plugin.class>
+        <plugin.id>${project.artifactId}</plugin.id>
+        <plugin.description>${project.description}</plugin.description>
+        <plugin.version>${project.version}</plugin.version>
+        <plugin.provider>my.provider</plugin.provider>
+        <!--plugin.requires>1.0.0</plugin.requires-->
+        <plugin.dependencies />
+    </properties>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>unzip jar file</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <unzip src="target/${artifactId}-${version}.${packaging}" dest="target/plugin-classes" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>
+                            src/main/assembly/assembly.xml
+                        </descriptor>
+                    </descriptors>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <plugin-id>${plugin.id}</plugin-id>
+                            <plugin-class>${plugin.class}</plugin-class>
+                            <plugin-version>${plugin.version}</plugin-version>
+                            <plugin-provider>${plugin.provider}</plugin-provider>
+                            <plugin-dependencies>${plugin.dependencies}</plugin-dependencies>
+                            <plugin-description>${plugin.description}</plugin-description>
+                            <plugin-requires>${plugin.requires}</plugin-requires>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!--plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin-->
+
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jnesto-platform-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jnesto-platform-demo-app</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <description>Implementa funções de uso comum aos componentes da aplicação.</description>
+    <name>Common Plugin</name>
+</project>

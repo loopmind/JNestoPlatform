@@ -11,8 +11,8 @@
     <name>JNesto Platform</name>
     <modules>
         <module>core</module>
-        <module>plugin</module>
         <module>Demo</module>
+        <module>windows</module>
     </modules>
     <dependencies>
         <dependency>

@@ -6,7 +6,8 @@
         <artifactId>jnesto-platform</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>Demo</artifactId>
+    <artifactId>jnesto-platform-demo</artifactId>
     <packaging>pom</packaging>
     <modules></modules>
+    <name>JNesto Platform Demo</name>
 </project>
