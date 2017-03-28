@@ -12,7 +12,7 @@
     <modules>
         <module>core</module>
         <module>Demo</module>
-        <module>windows</module>
+        <module>MainFramePlugin</module>
     </modules>
     <dependencies>
         <dependency>
