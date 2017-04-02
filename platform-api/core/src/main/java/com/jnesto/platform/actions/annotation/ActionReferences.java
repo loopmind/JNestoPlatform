@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 JNesto Team.
+ * Copyright 2015-2017 JNestoTeam.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jnesto.platform.actions;
+package com.jnesto.platform.actions.annotation;
 
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- *
+ * Anotação agrupadora de @see{ActionReference.class}.
+ * 
  * @author Flávio de Vasconcellos Corrêa loopmind2 at gmail.com
  */
-@Retention(value = RUNTIME)
-@Target(value = {TYPE})
-@Repeatable(ActionReferences.class)
-public @interface ActionReference {
+@Retention(value=RUNTIME)
+@Target(value={TYPE})
+public @interface ActionReferences {
 
-    String id();
-    
-    String path();
-
-    int position() default 2147483647;
-
-    boolean separatorBefore() default false;
-
-    boolean separatorAfter() default false;
+    ActionReference[] value();
 }

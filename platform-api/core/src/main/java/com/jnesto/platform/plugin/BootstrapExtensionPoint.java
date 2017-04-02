@@ -15,15 +15,18 @@
  */
 package com.jnesto.platform.plugin;
 
-import com.jnesto.platform.lookup.ServiceProvider;
 import ro.fortsoft.pf4j.ExtensionPoint;
 
 /**
- *
+ * Implements the main extension point in JNestoPlatform.
+ * 
  * @author Flavio de Vasconcellos Correa
  */
 public interface BootstrapExtensionPoint extends ExtensionPoint {
     
+    /**
+     * Invoke when a applications is started.
+     */
     void start();
     
 }

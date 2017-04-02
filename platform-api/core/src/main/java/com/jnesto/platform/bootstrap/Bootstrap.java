@@ -15,10 +15,13 @@
  */
 package com.jnesto.platform.bootstrap;
 
+import com.jnesto.platform.daemons.Daemon;
 import com.jnesto.platform.lookup.Lookup;
 import com.jnesto.platform.plugin.BootstrapExtensionPoint;
 import com.jnesto.platform.plugin.PluginManagerService;
-import javax.swing.SwingUtilities;
+import java.util.Comparator;
+import java.util.function.Consumer;
+import javax.swing.SwingWorker;
 import ro.fortsoft.pf4j.ExtensionPoint;
 import ro.fortsoft.pf4j.PluginManager;
 
@@ -27,18 +30,16 @@ import ro.fortsoft.pf4j.PluginManager;
  * @author Flavio de Vasconcellos Correa
  */
 public class Bootstrap {
-    
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            initialize();
-            starter();
-        });
+        initialize();
+        starter();
     }
 
     private static void initialize() {
         Lookup.register(new PluginManagerService());
         PluginManager pluginManager = Lookup.lookup(PluginManager.class);
-        if(pluginManager != null) {
+        if (pluginManager != null) {
             pluginManager.loadPlugins();
             pluginManager.startPlugins();
             pluginManager.getExtensions(ExtensionPoint.class).forEach(ep -> Lookup.register(ep));
@@ -46,10 +47,38 @@ public class Bootstrap {
     }
 
     private static void starter() {
+        startDaemons();
+        startBootstrap();
+    }
+    
+    private static void startBootstrap() {
         BootstrapExtensionPoint bep = Lookup.lookup(BootstrapExtensionPoint.class);
-        if(bep != null) {
+        if (bep != null) {
             bep.start();
         }
     }
-    
+
+    private static void startDaemons() {
+        Comparator<Daemon> comparator = (da, db) -> {
+            Daemon.Description descA = da.getClass().getAnnotation(Daemon.Description.class);
+            Daemon.Description descB = db.getClass().getAnnotation(Daemon.Description.class);
+            return descA.priority().compareTo(descB.priority());
+        };
+        Consumer<Daemon> consumer = (d) -> {
+            Daemon.Description desc = d.getClass().getAnnotation(Daemon.Description.class);
+            if(desc.asynch()) {
+                (new SwingWorker<Daemon, Void>() {
+                    @Override
+                    protected Daemon doInBackground() throws Exception {
+                        d.start();
+                        return d;
+                    }
+                }).execute();
+            } else {
+                d.start();
+            }
+        };
+        Lookup.lookupAll(Daemon.class).stream().sorted(comparator).forEach(consumer);
+    }
+
 }

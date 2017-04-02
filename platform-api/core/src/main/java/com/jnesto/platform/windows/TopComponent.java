@@ -19,98 +19,20 @@ import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import javax.swing.JComponent;
 
 /**
  *
  * @author Flávio de Vasconcellos Corrêa.
  */
-public class TopComponent extends JComponent {
-
-    private boolean open;
-    private boolean hidden;
-    private boolean docked;
-    private boolean maximized;
-    private boolean floating;
-//    private DockingDesktop dockingDesktop;
-    private List<TopComponentListener> tclList = Collections.synchronizedList(new LinkedList<>());
-
-    public TopComponent() {
-
-    }
-
-    public void addTopComponentListener(TopComponentListener tcl) {
-        Objects.requireNonNull(tcl, "TopComponentListener is a null value");
-        tclList.add(tcl);
-    }
-
-    public void removeTopComponentListener(TopComponentListener tcl) {
-        Objects.requireNonNull(tcl, "TopComponent is a null value");
-        if (tclList.contains(tcl)) {
-            tclList.remove(tcl);
-        }
-    }
-
-    private void setOpen(boolean open) {
-        this.open = open;
-        tclList.stream().forEach(tcl -> {
-            if (isOpen()) {
-                tcl.componentOpened();
-            } else {
-                tcl.componentClosed();
-            }
-        });
-    }
-
-    public boolean isOpen() {
-        return open;
-    }
-
-    private void setHidden(boolean hidden) {
-        this.hidden = hidden;
-        tclList.stream().forEach(tcl -> {
-            if (isHidden()) {
-                tcl.componentHidden();
-            } else {
-                tcl.componentShowing();
-            }
-        });
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    private void setDocked(boolean docked) {
-        this.docked = docked;
-    }
-
-    public boolean isDocked() {
-        return docked;
-    }
-
-    private void setMaximized(boolean maximized) {
-        this.maximized = maximized;
-    }
-
-    public boolean isMaximized() {
-        return maximized;
-    }
-
-    private void setFloating(boolean floating) {
-        this.floating = floating;
-    }
-
-    public boolean isFloating() {
-        return floating;
-    }
-
-    public void open() {
-    }
+public interface TopComponent {
+    
+    void onClosed();
+    
+    void onOpened();
+    
+    void onMaximized();
+    
+    void onMinimized();
 
     @Retention(value = RUNTIME)
     @Target(value = {TYPE})
@@ -129,5 +51,7 @@ public class TopComponent extends JComponent {
         boolean closeable() default true;
 
         String iconBase() default "";
+        
+        String[] actions() default {};
     }
 }

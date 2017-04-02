@@ -37,6 +37,8 @@ public interface Daemon {
         String description();
 
         Priority priority() default Priority.LOW;
+        
+        boolean asynch() default true;
     }
 
     public enum Priority {
@@ -62,7 +64,7 @@ public interface Daemon {
     public void stop();
 
     public Status getStatus();
-    
+
     public void setStatus(Status status);
 
     public String getMessageStatus();
@@ -72,7 +74,7 @@ public interface Daemon {
     public void addDaemonListener(DaemonListener l);
 
     public void removeDaemonListener(DaemonListener l);
-    
+
     public void performedDaemonListeners();
 
 }
