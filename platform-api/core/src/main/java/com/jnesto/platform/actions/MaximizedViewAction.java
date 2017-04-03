@@ -15,16 +15,9 @@
  */
 package com.jnesto.platform.actions;
 
-import com.jnesto.platform.demo.action.BellAction;
 import com.jnesto.platform.lookup.ServiceProvider;
-import com.jnesto.platform.windows.JMenuAction;
-import com.jnesto.platform.windows.JMenuItemAction;
-import com.jnesto.platform.windows.JToolBarAction;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -32,7 +25,6 @@ import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.view.Button;
 import org.flexdock.view.View;
-import org.slf4j.LoggerFactory;
 import ro.fortsoft.pf4j.Extension;
 import ro.fortsoft.pf4j.ExtensionPoint;
 
@@ -41,11 +33,10 @@ import ro.fortsoft.pf4j.ExtensionPoint;
  * @author flavio
  */
 @ServiceProvider(
-        id = "#CTL_MAXIMIZEDVIEWACTION",
-        service = {JMenuAction.class}
+        id = "#CTL_MAXIMIZEDVIEWACTION"
 )
 @Extension
-public class MaximizedViewAction extends AbstractAction implements JMenuItemAction, JToolBarAction, ExtensionPoint {
+public class MaximizedViewAction extends AbstractAction implements ExtensionPoint {
 
     private ImageIcon arrowIn;
     private ImageIcon arrowOut;
@@ -57,32 +48,30 @@ public class MaximizedViewAction extends AbstractAction implements JMenuItemActi
 
     private void init() {
         try {
+            arrowOut = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_out.png")));
+            arrowIn = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_in.png")));
             putValue(AbstractAction.NAME, "Maximiza/Restaura");
             putValue(AbstractAction.SHORT_DESCRIPTION, "Minimiza visão.");
-            arrowIn = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_in.png")));
-            arrowOut = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_out.png")));
             putValue(AbstractAction.SMALL_ICON, arrowOut);
         } catch (IOException ex) {
-            Logger.getLogger(BellAction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         View view = null;
-        if (e != null && e.getSource() != null) {
+        if (e != null) {
             if (e.getSource() instanceof Button) {
-                Button buttonView = (Button) e.getSource();
-                view = buttonView.getView();
+                view = ((Button) e.getSource()).getView();
             } else {
                 if (e.getSource() instanceof View) {
                     view = (View) e.getSource();
                 }
             }
-        }
-        if(view != null) {
-            DockingManager.toggleMaximized((Dockable) view);
-            putValue(AbstractAction.SMALL_ICON, !DockingManager.isMaximized(view) ? arrowOut : arrowIn);
+            if (view != null) {
+                DockingManager.toggleMaximized((Dockable) view);
+                putValue(AbstractAction.SMALL_ICON, !DockingManager.isMaximized(view) ? arrowOut : arrowIn);
+            }
         }
 
     }
