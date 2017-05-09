@@ -17,6 +17,17 @@ package com.jnesto.platform.utils;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.JTextComponent;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
@@ -26,10 +37,10 @@ import org.jdesktop.beansbinding.ELProperty;
  *
  * @author Flavio de Vasconcellos Correa.
  */
-public class BeanUtils {
+public class JNestoTools {
 
     public static AutoBinding bindBuilder(Object s, AutoBinding.UpdateStrategy us, String ps, Object t, String pt) {
-        if (s != null && t != null && us != null && BeanUtils.isNonEmpty(ps) && BeanUtils.isNonEmpty(pt)) {
+        if (s != null && t != null && us != null && JNestoTools.isNonEmpty(ps) && JNestoTools.isNonEmpty(pt)) {
             return Bindings.createAutoBinding(
                     us,
                     s,
@@ -98,4 +109,46 @@ public class BeanUtils {
         comp.setFont(n);
     }
 
+    public final static String UNDO_ACTION = "Undo";
+
+    public final static String REDO_ACTION = "Redo";
+
+    public static void makeUndoable(JTextComponent textComponent) {
+        final UndoManager undoMgr = new UndoManager();
+
+        // Add listener for undoable events
+        textComponent.getDocument().addUndoableEditListener(new UndoableEditListener() {
+            @Override
+            public void undoableEditHappened(UndoableEditEvent evt) {
+                undoMgr.addEdit(evt.getEdit());
+            }
+        });
+
+        // Add undo/redo actions
+        textComponent.getActionMap().put(UNDO_ACTION, new AbstractAction(UNDO_ACTION) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undoMgr.canUndo()) {
+                        undoMgr.undo();
+                    }
+                } catch (CannotUndoException e) {
+                }
+            }
+        });
+        textComponent.getActionMap().put(REDO_ACTION, new AbstractAction(REDO_ACTION) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undoMgr.canRedo()) {
+                        undoMgr.redo();
+                    }
+                } catch (CannotRedoException e) {
+                }
+            }
+        });
+        // Create keyboard accelerators for undo/redo actions (Ctrl+Z/Ctrl+Y)
+        textComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), UNDO_ACTION);
+        textComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK), REDO_ACTION);
+    }
 }

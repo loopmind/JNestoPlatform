@@ -38,7 +38,36 @@ public final class Lookup {
     private final static Map<Class, Collection> mapClass = Collections.synchronizedMap(new HashMap<>());
 
     /**
-     * Registra e realiza o mapeamento de um objeto concreto.
+     * Mapeamento de um objeto concreto baseado em uma classe como chave de
+     * identificação.
+     *
+     * @param ref
+     * @param target
+     */
+    public static synchronized void register(Class ref, Object target) {
+        if (ref.isInstance(target)) {
+            if (!mapClass.containsKey(ref)) {
+                mapClass.put(ref, Collections.synchronizedList(new LinkedList<>()));
+            }
+            mapClass.get(ref).add(target);
+        } else {
+            throw new RuntimeException(target + " not instance " + ref);
+        }
+    }
+
+    /**
+     * Mapeamento de um objeto concreto baseado em uma chave de identificação.
+     *
+     * @param id
+     * @param target
+     */
+    public static synchronized void register(String id, Object target) {
+        mapID.put(id, target);
+    }
+
+    /**
+     * Registra e realiza o mapeamento de um objeto concreto, baseado em
+     * Annotation.
      *
      * @param target - Objeto alvo.
      */
@@ -50,24 +79,11 @@ public final class Lookup {
             Class[] service = lid.service();
             if (service != null && service.length > 0) {
                 Arrays.asList(service).forEach(s -> {
-                    if (s.isInterface()) {
-                        //if ((clazz.getInterfaces().length != 0 && Arrays.asList(clazz.getInterfaces()).contains(s))) 
-                        if(s.isInstance(target))
-                        {
-                            if (!mapClass.containsKey(s)) {
-                                mapClass.put(s, Collections.synchronizedList(new LinkedList<>()));
-                            }
-                            mapClass.get(s).add(target);
-                        } else {
-                            throw new RuntimeException(target.getClass() + " not instance " + s);
-                        }
-                    } else {
-                        throw new RuntimeException(s + " is not a Interface");
-                    }
+                    register(s, target);
                 });
             }
             if (!lid.id().isEmpty()) {
-                mapID.put(lid.id(), target);
+                register(lid.id(), target);
             }
             LoggerFactory.getLogger(Lookup.class).debug("Registering {}", lid.id());
         }
@@ -75,7 +91,7 @@ public final class Lookup {
 
     /**
      * Remove do registro um objeto concreto.
-     * 
+     *
      * @param target - Objeto alvo.
      */
     public static synchronized void unRegister(Object target) {
@@ -99,14 +115,13 @@ public final class Lookup {
     }
 
     /**
-     *  Busca todos as instâncias que correspondam a determinada classe.
-     *  Uso:
-     *  <pre>{@code
+     * Busca todos as instâncias que correspondam a determinada classe. Uso:
+     * <pre>{@code
      *  for(IMeuServico srv : Lookup.lookupAll(IMeuServico.class) {
      *      srv.facaAlgo();
      *  }
      *  }</pre>
-     * 
+     *
      * @param clazz - Tipo da classe a que se deseja pesquisar.
      * @return Todas as ocorrências que pertençam a classe de pesquisa.
      */
@@ -115,17 +130,16 @@ public final class Lookup {
     }
 
     /**
-     *  Busca todos as instâncias que correspondam a determinada classe
-     *  e que atendam aos critérios em @see LookupConstraints.
-     *  Uso:
-     *  <pre>{@code 
+     * Busca todos as instâncias que correspondam a determinada classe e que
+     * atendam aos critérios em @see LookupConstraints. Uso:
+     * <pre>{@code
      *  LookupConstraints lc = (s) -> s.isAvaliable();
-     * 
+     *
      *  for(IMeuServico srv : Lookup.lookupAll(IMeuServico.class, lc) {
      *      srv.facaAlgo();
      *  }
      *  }</pre>
-     * 
+     *
      * @param clazz - Tipo da classe a que se deseja pesquisar.
      * @param lc - Define regras de restrição a busca.
      * @return Todas as ocorrências que pertençam a classe de pesquisa.
@@ -143,14 +157,37 @@ public final class Lookup {
     }
 
     /**
-     * Busca apenas a primeira ocorrência que corresponda a determinada
-     * classe.
+     * Busca todos as instâncias que correspondam a determinada classe e que
+     * atendam aos critérios em @see LookupConstraints. Uso:
+     * <pre>{@code
+     *  LookupConstraints lc = (s) -> s.isAvaliable();
+     *
+     *  for(IMeuServico srv : Lookup.lookupAll(IMeuServico.class, lc) {
+     *      srv.facaAlgo();
+     *  }
+     *  }</pre>
+     *
+     * @param lc - Define regras de restrição a busca.
+     * @return Todas as ocorrências que pertençam a classe de pesquisa.
+     */
+    public static synchronized Collection lookupAll(LookupConstraints lc) {
+        Objects.requireNonNull(lc, "parameter must not be a null.");
+        Collection collection = Collections.synchronizedCollection(new LinkedList());
+        Collections.addAll(collection, mapID.values());
+        collection.stream()
+                .filter(e -> lc.validate(e))
+                .collect(Collectors.toList());
+        return collection;
+    }
+
+    /**
+     * Busca apenas a primeira ocorrência que corresponda a determinada classe.
      * Uso:
      * <pre>{@code
      * IMeuServiço srv = Lookup.lookup(IMeuServico.class);
      * if(srv != null) srv.facaAlgo();
      * }</pre>
-     * 
+     *
      * @param clazz - Tipo da classe a que se deseja pesquisar.
      * @return Um objeto que corresponda a classe de pesquisa.
      */
@@ -163,15 +200,18 @@ public final class Lookup {
     }
 
     /**
-     * Busca um determinda instância pelo valor do seu ID. O ID é determinada
-     * em ServiceProvider {@see ServiceProvider#value}.
-     * 
+     * Busca um determinda instância pelo valor do seu ID. O ID é determinada em
+     * ServiceProvider {
+     *
+     * @see ServiceProvider#value}.
+     *
      * Uso:
-     * <p><code>
+     * <p>
+     * <code>
      * IMeuServiço srv = Lookup.lookupById("MeuServico");
      * if(srv != null) srv.facaAlgo();
      * </code></p>
-     * 
+     *
      * @param id String Chave de identificação de uma instância.
      * @return Um objeto que corresponda a chave de busca.
      */

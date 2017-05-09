@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 flavio.
+ * Copyright 2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,39 +15,41 @@
  */
 package com.jnesto.platform.actions;
 
-import com.jnesto.platform.actions.annotation.ActionReference;
 import com.jnesto.platform.lookup.ServiceProvider;
-import com.jnesto.platform.windows.JMenuAction;
 import com.jnesto.platform.windows.JMenuItemAction;
-import com.jnesto.platform.windows.JToolBarAction;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.Set;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
+import org.flexdock.view.Button;
 import org.flexdock.view.View;
 import ro.fortsoft.pf4j.Extension;
 import ro.fortsoft.pf4j.ExtensionPoint;
 
 /**
  *
- * @author flavio
+ * @author Flavio de Vasconcellos Correa
  */
 @ServiceProvider(
         id = "#CTL_CLOSEWINDOWACTION",
-        service = {JMenuAction.class}
+        service = {ExtensionPoint.class}
 )
-@ActionReference(
-        id = "CLOSEWINDOW",
-        path = "MENU/WINDOW",
-        position = 9000,
-        separatorBefore = true
-)
+//@ActionReference(
+//        id = "CLOSEWINDOW",
+//        path = "MENU/WINDOW",
+//        position = 90000,
+//        separatorBefore = true
+//)
 @Extension
-public class CloseWindowAction extends AbstractAction implements JMenuItemAction, JToolBarAction, ExtensionPoint {
+public class CloseWindowAction extends AbstractAction implements JMenuItemAction, ExtensionPoint {
 
     public CloseWindowAction() {
         super();
@@ -55,26 +57,24 @@ public class CloseWindowAction extends AbstractAction implements JMenuItemAction
     }
 
     private void init() {
-        putValue(AbstractAction.NAME, "Fechar Janela");
-        putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
+        try {
+            putValue(AbstractAction.ACTION_COMMAND_KEY, ((ServiceProvider) getClass().getAnnotation(ServiceProvider.class)).id());
+            putValue(AbstractAction.NAME, "Fechar Janela");
+            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
+            putValue(AbstractAction.SMALL_ICON, new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/cross.png"))));
+        } catch (IOException ex) {
+            Logger.getLogger(CloseWindowAction.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Set<String> ids = DockingManager.getDockableIds();
-        for(String id : ids) {
-            Dockable dock = DockingManager.getDockable((String) id);
-            if(dock instanceof View && ((View) dock).isActive()) {
-                DockingManager.close((Dockable) DockingManager.getDockable((String) id));
-                break;
+        if (e != null && e.getSource() != null && e.getSource() instanceof Button && ((Button) e.getSource()).getView() != null) {
+            View view = (View) ((Button) e.getSource()).getView();
+            if(DockingManager.isMaximized(view)) {
+                DockingManager.toggleMaximized((Dockable) view);
             }
-        }        
-        for(String id : ids) {
-            Dockable dock = DockingManager.getDockable((String) id);
-            if(dock instanceof View && !((View) dock).isActive()) {
-                ((View) dock).getContentPane().requestFocus();
-                break;
-            }
+            DockingManager.undock((Dockable) ((Button) e.getSource()).getView());
         }
     }
 

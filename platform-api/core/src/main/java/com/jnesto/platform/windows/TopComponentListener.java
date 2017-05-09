@@ -21,16 +21,12 @@ package com.jnesto.platform.windows;
  */
 public interface TopComponentListener {
     
-    public void componentOpened(); // moment open
+    public void maximized(); // moment open
     
-    public void componentClosed();// moment close
+    public void unMaximized();// moment close
     
-    public void componentActivated(); // docked
+    public void docked(); // docked
     
-    public void componentDeactivated();// minimized
-    
-    public void componentHidden(); // minimized
-    
-    public void componentShowing(); // maximized
+    public void unDocked();// minimized
     
 }

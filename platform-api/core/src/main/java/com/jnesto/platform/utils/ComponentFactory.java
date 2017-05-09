@@ -15,8 +15,11 @@
  */
 package com.jnesto.platform.utils;
 
+import com.jgoodies.common.swing.MnemonicUtils;
 import com.jnesto.platform.actions.annotation.ActionReference;
 import com.jnesto.platform.actions.annotation.ActionReferences;
+import com.jnesto.platform.lookup.Lookup;
+import com.jnesto.platform.lookup.ServiceProvider;
 import com.jnesto.platform.windows.JCheckBoxAction;
 import com.jnesto.platform.windows.JMenuAction;
 import com.jnesto.platform.windows.JMenuItemAction;
@@ -42,6 +45,18 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import com.jnesto.platform.windows.JRadioButtonAction;
 import com.jnesto.platform.windows.JToolBarAction;
+import com.jnesto.platform.windows.TopComponent;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import org.flexdock.view.View;
+import org.flexdock.view.actions.DefaultDisplayAction;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +74,11 @@ public final class ComponentFactory {
     private final static String PATHSEPARATOR = "/";
 
     public static JToolBar createJToolbar(Collection<? extends JToolBarAction> actions) {
-        Objects.requireNonNull(actions);
+        return createJToolbar(actions, new JToolBar());
+    }
 
-        final JToolBar tbar = new JToolBar();
+    public static JToolBar createJToolbar(Collection<? extends JToolBarAction> actions, JToolBar tbar) {
+        Objects.requireNonNull(actions);
 
         tbar.setFocusable(false);
 
@@ -91,59 +108,85 @@ public final class ComponentFactory {
             }
         };
 
-        actions.stream().filter(predicate).sorted(comparator).forEach(consumer);
+        actions.stream()
+                .filter(predicate)
+                .sorted(comparator)
+                .forEach(consumer);
 
         return tbar;
     }
 
-    public static JMenuBar createJMenuBar(Collection<? extends JMenuAction> actions) {
-        return createJMenuBar(actions, null);
+    public static JMenuBar createJMenuBar(Collection actions) {
+        return createJMenuBar(actions, new JMenuBar());
     }
 
-    public static JMenuBar createJMenuBar(Collection<? extends JMenuAction> actions, JMenuBar mbar) {
+    final static Map<String, Component> mapComp = new HashMap<>();
+    final static Map<String, ButtonGroup> btnGroupMap = new HashMap<>();
+    final static BindingGroup bg = new BindingGroup();
+
+    public static JMenuBar createJMenuBar(Collection<? extends Object> actions, JMenuBar mbar) {
         Objects.requireNonNull(actions);
-        mbar = mbar == null ? new JMenuBar() : mbar;
-        final Map<String, Component> mapComp = new HashMap<>();
-        final Map<String, ButtonGroup> btnGroupMap = new HashMap<>();
-        final BindingGroup bg = new BindingGroup();
 
         mapComp.put(MENUBARTAG, mbar);
 
-        Predicate<Action> predicate = a
+        Predicate predicate = a
                 -> ((a.getClass().isAnnotationPresent(ActionReferences.class)
                 || a.getClass().isAnnotationPresent(ActionReference.class))
                 && (loadActionReferenceByTag(a.getClass(), MENUBARTAG) != null));
 
-        Comparator<Action> comparator = (a, b) -> {
+        Comparator comparator = (a, b) -> {
             ActionReference arA = loadActionReferenceByTag(a.getClass(), MENUBARTAG);
             ActionReference arB = loadActionReferenceByTag(b.getClass(), MENUBARTAG);
             int r = arA.path().compareToIgnoreCase(arB.path());
             return r == 0 ? Integer.compare(arA.position(), arB.position()) : r;
         };
 
-        Consumer<Action> consumer = a -> {
+        Consumer consumer = a -> {
             ActionReference ar = loadActionReferenceByTag(a.getClass(), MENUBARTAG);
             if (ar != null) {
                 Component comp = mapComp.get(ar.path());
                 if (comp != null) {
                     Component item = null;
                     if (a instanceof JMenuItemAction) {
-                        item = new JMenuItem(a);
+                        item = new JMenuItem((JMenuItemAction) a);
                     } else {
                         if (a instanceof JCheckBoxAction) {
-                            item = new JCheckBoxMenuItem(a);
-                            BeanUtils.bindBuilder((JCheckBoxAction) a, "selected", (JCheckBoxMenuItem) item, "selected").bind();
+                            item = new JCheckBoxMenuItem((JCheckBoxAction) a);
+                            JNestoTools.bindBuilder((JCheckBoxAction) a, "selected", (JCheckBoxMenuItem) item, "selected").bind();
                         } else {
                             if (a instanceof JRadioButtonAction) {
-                                item = new JRadioButtonMenuItem(a);
+                                item = new JRadioButtonMenuItem((JRadioButtonAction) a);
                                 if (!btnGroupMap.containsKey(ar.path())) {
                                     btnGroupMap.put(ar.path(), new ButtonGroup());
                                 }
                                 btnGroupMap.get(ar.path()).add((JRadioButtonMenuItem) item);
-                                BeanUtils.bindBuilder((JRadioButtonAction) a, "selected", (JRadioButtonMenuItem) item, "selected").bind();
+                                JNestoTools.bindBuilder((JRadioButtonAction) a, "selected", (JRadioButtonMenuItem) item, "selected").bind();
                             } else {
                                 if (a instanceof JMenuAction) {
-                                    item = new JMenu(a);
+                                    item = new JMenu((JMenuAction) a);
+                                } else {
+                                    if (a instanceof TopComponent
+                                            && a instanceof Container
+                                            && a.getClass().isAnnotationPresent(ServiceProvider.class)) {
+                                        ServiceProvider sp = a.getClass().getAnnotation(ServiceProvider.class);
+                                        AbstractAction aa = new DefaultDisplayAction(sp.id());
+                                        try {
+                                            if (a.getClass().isAnnotationPresent(TopComponent.Description.class)) {
+                                                TopComponent.Description description = a.getClass().getAnnotation(TopComponent.Description.class);
+//                                                aa.putValue(AbstractAction.NAME, description.title());
+                                                MnemonicUtils.configure(aa, description.title());
+                                                aa.putValue(AbstractAction.SMALL_ICON, new ImageIcon(ImageIO.read(ComponentFactory.class.getResourceAsStream(description.iconBase()))));
+                                                Lookup.register(DefaultDisplayAction.class, aa);
+                                                if(a.getClass().isAnnotationPresent(ActionReference.class)) {
+                                                    ActionReference aRef = a.getClass().getAnnotation(ActionReference.class);
+                                                    Lookup.register(aRef.id(), aa);
+                                                }
+                                            }
+                                        } catch (IOException ex) {
+                                        }
+                                        item = new JMenuItem(aa);
+
+                                    }
                                 }
                             }
                         }
@@ -168,9 +211,45 @@ public final class ComponentFactory {
             }
         };
 
-        actions.stream().filter(predicate).sorted(comparator).forEach(consumer);
+        actions.stream()
+                .filter(predicate)
+                .sorted(comparator)
+                .forEach(consumer);
         bg.bind();
         return mbar;
+    }
+
+    public static View createView(Container comp) {
+        if (comp.getClass().isAnnotationPresent(TopComponent.Description.class)) {
+            try {
+                TopComponent.Description description = comp.getClass().getAnnotation(TopComponent.Description.class);
+                View view = new View(description.title(), description.title());
+                view.setContentPane(comp);
+                Icon icon = new ImageIcon(ImageIO.read(ComponentFactory.class.getResourceAsStream(description.iconBase())));
+                view.setIcon(icon);
+                view.setTabIcon(icon);
+                if (description.closeable()) {
+                    view.addAction((Action) Lookup.lookupById("#CTL_CLOSEVIEWACTION"));
+                }
+                if (description.maximized()) {
+                    view.addAction((Action) Lookup.lookupById("#CTL_MAXIMIZEDVIEWACTION"));
+                }
+                view.getTitlebar().addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 2) {
+                            Action action = ((Action) Lookup.lookupById("#CTL_MAXIMIZEDVIEWACTION"));
+                            ActionEvent evt = new ActionEvent(view, 0, (String) action.getValue(AbstractAction.NAME));
+                            action.actionPerformed(evt);
+                        }
+                    }
+
+                });
+                return view;
+            } catch (IOException ex) {
+            }
+        }
+        return null;
     }
 
     private static ActionReference loadActionReferenceByTag(Class clazz, String tag) {

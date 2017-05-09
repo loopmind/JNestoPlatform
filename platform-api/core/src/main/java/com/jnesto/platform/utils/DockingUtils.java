@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 JNesto Team.
+ * Copyright 2017 flavio.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jnesto.platform.plugin;
+package com.jnesto.platform.utils;
 
-import ro.fortsoft.pf4j.ExtensionPoint;
+import org.flexdock.docking.Dockable;
+import org.flexdock.docking.DockingManager;
 
 /**
- * Implements the main extension point in JNestoPlatform.
- * 
- * @author Flavio de Vasconcellos Correa
+ *
+ * @author flavio
  */
-public interface BootstrapExtensionPoint extends ExtensionPoint {
+public class DockingUtils {
     
-    /**
-     * Invoke when a applications is started.
-     */
-    void start();
+    public static void unMaximized() {
+        DockingManager.getDockableIds().stream().forEach(id -> {
+            Dockable dockable = DockingManager.getDockable((String) id);
+            if (DockingManager.isMaximized(dockable)) {
+                DockingManager.toggleMaximized(dockable);
+            }
+        });
+        
+    }
     
 }

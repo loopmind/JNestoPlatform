@@ -50,6 +50,7 @@ public class MaximizedViewAction extends AbstractAction implements ExtensionPoin
         try {
             arrowOut = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_out.png")));
             arrowIn = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_in.png")));
+            putValue(AbstractAction.ACTION_COMMAND_KEY, ((ServiceProvider)getClass().getAnnotation(ServiceProvider.class)).id());
             putValue(AbstractAction.NAME, "Maximiza/Restaura");
             putValue(AbstractAction.SHORT_DESCRIPTION, "Minimiza visão.");
             putValue(AbstractAction.SMALL_ICON, arrowOut);
@@ -60,20 +61,14 @@ public class MaximizedViewAction extends AbstractAction implements ExtensionPoin
     @Override
     public void actionPerformed(ActionEvent e) {
         View view = null;
-        if (e != null) {
-            if (e.getSource() instanceof Button) {
-                view = ((Button) e.getSource()).getView();
-            } else {
-                if (e.getSource() instanceof View) {
-                    view = (View) e.getSource();
-                }
-            }
-            if (view != null) {
-                DockingManager.toggleMaximized((Dockable) view);
-                putValue(AbstractAction.SMALL_ICON, !DockingManager.isMaximized(view) ? arrowOut : arrowIn);
-            }
+        if (e.getSource() instanceof Button) {
+            Button btn = (Button) e.getSource();
+            view = btn.getView();
         }
-
+        if(view != null) {
+            DockingManager.toggleMaximized((Dockable) view);
+            putValue(AbstractAction.SMALL_ICON, DockingManager.isMaximized(view) ? arrowIn : arrowOut);           
+        }
     }
 
 }

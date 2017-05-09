@@ -39,9 +39,10 @@ import ro.fortsoft.pf4j.ExtensionPoint;
 @ActionReference(
         id = "CLOSEALLWINDOWS",
         path = "MENU/WINDOW",
-        position = 10000
+        position = 100000,
+        separatorBefore = true
 )
-@Extension
+//@Extension
 public class CloseAllWindowsAction extends AbstractAction implements JMenuItemAction, JToolBarAction, ExtensionPoint {
 
     public CloseAllWindowsAction() {
@@ -55,10 +56,15 @@ public class CloseAllWindowsAction extends AbstractAction implements JMenuItemAc
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        DockingManager.getDockableIds().forEach(id -> {
-            Dockable dock = DockingManager.getDockable((String) id);
-            if (dock != null && dock instanceof View) {
-                DockingManager.close((Dockable) dock);
+        DockingManager.getDockableIds().stream().forEach(sid -> {
+            View view = View.getInstance((String) sid);
+            if (view != null) {
+                if (DockingManager.isDocked((Dockable) view)) {
+                    if (DockingManager.isMaximized(view)) {
+                        DockingManager.toggleMaximized((Dockable) view);
+                    }
+                    DockingManager.undock((Dockable) view);
+                }
             }
         });
     }

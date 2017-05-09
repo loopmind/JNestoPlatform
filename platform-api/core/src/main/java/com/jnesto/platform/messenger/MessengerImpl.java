@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Flavio de Vasconcellos Correa
  */
 @ServiceProvider(
-        id = "Messenger.Default",
+        id = Messenger.DEFAULT_ID,
         service = Messenger.class
 )
 public class MessengerImpl implements Messenger {

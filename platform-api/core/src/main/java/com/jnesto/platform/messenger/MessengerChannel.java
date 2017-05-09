@@ -40,4 +40,8 @@ public interface MessengerChannel {
     public List<MessengerChannelListener> getAllMessengerListener();
 
     public String getDescription();
+    
+    public void setContent(Object content);
+    
+    public Object getContent();
 }

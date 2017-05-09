@@ -26,14 +26,6 @@ import java.lang.annotation.Target;
  */
 public interface TopComponent {
     
-    void onClosed();
-    
-    void onOpened();
-    
-    void onMaximized();
-    
-    void onMinimized();
-
     @Retention(value = RUNTIME)
     @Target(value = {TYPE})
     public @interface Description {
@@ -54,4 +46,11 @@ public interface TopComponent {
         
         String[] actions() default {};
     }
+
+    public void onOpened();
+    
+    public void onClosed();
+    
+    public void onMaximized(boolean isMaximized);
+    
 }

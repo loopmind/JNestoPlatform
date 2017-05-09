@@ -20,6 +20,8 @@ package com.jnesto.platform.messenger;
  * @author Flavio de Vasconcellos Correa
  */
 public interface Messenger {
+    
+    public static String DEFAULT_ID = "Messenger.Default";
 
     public void openChannel(String id, MessengerChannel channel);
 

@@ -13,52 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jnesto.platform.bootstrap;
+package com.jnesto.platform.runner;
 
 import com.jnesto.platform.daemons.Daemon;
 import com.jnesto.platform.lookup.Lookup;
-import com.jnesto.platform.plugin.BootstrapExtensionPoint;
+import com.jnesto.platform.messenger.MessengerSingleton;
 import com.jnesto.platform.plugin.PluginManagerService;
 import java.util.Comparator;
 import java.util.function.Consumer;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import ro.fortsoft.pf4j.ExtensionPoint;
 import ro.fortsoft.pf4j.PluginManager;
+import com.jnesto.platform.plugin.StartupExtensionPoint;
 
 /**
  *
  * @author Flavio de Vasconcellos Correa
  */
-public class Bootstrap {
+public final class Runner {
 
     public static void main(String[] args) {
-        initialize();
-        starter();
+        SwingUtilities.invokeLater(() -> (new Runner()).runApplication());
     }
 
-    private static void initialize() {
+    protected void initialize() {
+        // Initialize Messenger Layer
+        Lookup.register(MessengerSingleton.getInstance());
+        // Initialize Plugin Manager
+        PluginManager pluginManager;
         Lookup.register(new PluginManagerService());
-        PluginManager pluginManager = Lookup.lookup(PluginManager.class);
-        if (pluginManager != null) {
+        if ((pluginManager = Lookup.lookup(PluginManager.class)) != null) {
             pluginManager.loadPlugins();
             pluginManager.startPlugins();
             pluginManager.getExtensions(ExtensionPoint.class).forEach(ep -> Lookup.register(ep));
         }
     }
 
-    private static void starter() {
+    public void runApplication() {
+        initialize();
         startDaemons();
-        startBootstrap();
+        startApplication();
     }
-    
-    private static void startBootstrap() {
-        BootstrapExtensionPoint bep = Lookup.lookup(BootstrapExtensionPoint.class);
-        if (bep != null) {
+
+    protected void startApplication() {
+        StartupExtensionPoint bep;
+        if ((bep = Lookup.lookup(StartupExtensionPoint.class)) != null) {
             bep.start();
         }
     }
 
-    private static void startDaemons() {
+    protected void startDaemons() {
         Comparator<Daemon> comparator = (da, db) -> {
             Daemon.Description descA = da.getClass().getAnnotation(Daemon.Description.class);
             Daemon.Description descB = db.getClass().getAnnotation(Daemon.Description.class);
@@ -66,7 +71,7 @@ public class Bootstrap {
         };
         Consumer<Daemon> consumer = (d) -> {
             Daemon.Description desc = d.getClass().getAnnotation(Daemon.Description.class);
-            if(desc.asynch()) {
+            if (desc.asynch()) {
                 (new SwingWorker<Daemon, Void>() {
                     @Override
                     protected Daemon doInBackground() throws Exception {
@@ -78,7 +83,10 @@ public class Bootstrap {
                 d.start();
             }
         };
-        Lookup.lookupAll(Daemon.class).stream().sorted(comparator).forEach(consumer);
+        Lookup.lookupAll(Daemon.class)
+                .stream()
+                .sorted(comparator)
+                .forEach(consumer);
     }
 
 }

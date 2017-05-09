@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Flavio de Vasconcellos Correa
+ * @author Flavio Vasconcellos Correa
  */
 public abstract class AbstractMessengerChannel implements MessengerChannel {
 
@@ -70,12 +70,14 @@ public abstract class AbstractMessengerChannel implements MessengerChannel {
         });
     }
 
+    @Override
     public void setContent(Object content) {
         Object oldContent = this.content;
         this.content = content;
         pcs.firePropertyChange(PROP_CONTENT, oldContent, content);
     }
 
+    @Override
     public Object getContent() {
         return content;
     }
@@ -131,6 +133,8 @@ public abstract class AbstractMessengerChannel implements MessengerChannel {
                 listeners.add(listener);
                 if (isOpen()) {
                     fireMessagePerformed(listener, getSender(), MessageEvent.BROADCAST, getContent());
+                } else {
+                    fireMessagePerformed(listener, getSender(), MessageEvent.STOP, getContent());
                 }
             }
         } catch (NullPointerException e) {
@@ -162,8 +166,8 @@ public abstract class AbstractMessengerChannel implements MessengerChannel {
                         fireMessagePerformed(listener, getSender(), MessageEvent.STOP, getContent());
                     }
                 } finally {
-                    constraintsMap.remove(listener);
-                    listeners.remove(listener);
+//                    constraintsMap.remove(listener);
+//                    listeners.remove(listener);
                 }
             }
         } catch (NullPointerException e) {

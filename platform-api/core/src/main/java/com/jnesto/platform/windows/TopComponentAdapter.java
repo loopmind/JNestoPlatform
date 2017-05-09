@@ -22,33 +22,19 @@ package com.jnesto.platform.windows;
 public class TopComponentAdapter implements TopComponentListener {
 
     @Override
-    public void componentOpened() {
-        //NOOP
+    public void maximized() {
     }
 
     @Override
-    public void componentClosed() {
-        //NOOP
+    public void unMaximized() {
     }
 
     @Override
-    public void componentActivated() {
-        //NOOP
+    public void docked() {
     }
 
     @Override
-    public void componentDeactivated() {
-        //NOOP
-    }
-
-    @Override
-    public void componentHidden() {
-        //NOOP
-    }
-
-    @Override
-    public void componentShowing() {
-        //NOOP
+    public void unDocked() {
     }
     
 }
