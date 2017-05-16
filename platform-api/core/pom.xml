@@ -65,7 +65,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.jnesto.platform.bootstrap.Bootstrap</mainClass>
+                            <mainClass>com.jnesto.platform.runner.Runner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

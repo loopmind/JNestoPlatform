@@ -23,7 +23,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.jnesto.platform.bootstrap.Bootstrap</mainClass>
+                  <mainClass>com.jnesto.platform.runner.Runner</mainClass>
                 </transformer>
               </transformers>
             </configuration>
