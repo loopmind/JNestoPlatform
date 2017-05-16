@@ -11,8 +11,5 @@
     <name>JNesto Platform</name>
     <modules>
         <module>core</module>
-        <module>Demo</module>
-        <module>lookandfeel-plugin</module>
-        <module>main-frame-plugin</module>
     </modules>
 </project>
