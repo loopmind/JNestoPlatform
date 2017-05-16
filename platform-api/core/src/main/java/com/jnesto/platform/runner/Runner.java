@@ -15,32 +15,42 @@
  */
 package com.jnesto.platform.runner;
 
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jnesto.platform.daemons.Daemon;
 import com.jnesto.platform.lookup.Lookup;
 import com.jnesto.platform.messenger.MessengerSingleton;
 import com.jnesto.platform.plugin.PluginManagerService;
-import java.util.Comparator;
-import java.util.function.Consumer;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import ro.fortsoft.pf4j.ExtensionPoint;
 import ro.fortsoft.pf4j.PluginManager;
 import com.jnesto.platform.plugin.StartupExtensionPoint;
+import java.awt.EventQueue;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
  * @author Flavio de Vasconcellos Correa
  */
-public final class Runner {
+final class Runner {
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> (new Runner()).runApplication());
+    protected Runner(String[] args) {
+        List<String> largs = Arrays.asList(args);
+        if (largs.contains("--guiapp")) {
+            initializeLookAndFeel();
+        }
+        initializeMessenger();
+        initializePluginManager();
+        initializeDaemons();
     }
 
-    protected void initialize() {
-        // Initialize Messenger Layer
+    protected void initializeMessenger() {
         Lookup.register(MessengerSingleton.getInstance());
-        // Initialize Plugin Manager
+    }
+
+    protected void initializePluginManager() {
         PluginManager pluginManager;
         Lookup.register(new PluginManagerService());
         if ((pluginManager = Lookup.lookup(PluginManager.class)) != null) {
@@ -50,43 +60,46 @@ public final class Runner {
         }
     }
 
-    public void runApplication() {
-        initialize();
-        startDaemons();
-        startApplication();
+    protected void initializeLookAndFeel() {
+        try {
+            PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceGreen());
+            UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
+        } catch (UnsupportedLookAndFeelException ex) {
+        }
     }
 
-    protected void startApplication() {
-        StartupExtensionPoint bep;
-        if ((bep = Lookup.lookup(StartupExtensionPoint.class)) != null) {
+    protected void initializeDaemons() {
+        Lookup.lookupAll(Daemon.class)
+                .stream()
+                .sorted((da, db) -> {
+                    Daemon.Description descA = da.getClass().getAnnotation(Daemon.Description.class);
+                    Daemon.Description descB = db.getClass().getAnnotation(Daemon.Description.class);
+                    return descA.priority().compareTo(descB.priority());
+                })
+                .forEach((d) -> {
+                    Daemon.Description desc = d.getClass().getAnnotation(Daemon.Description.class);
+                    if (desc.asynch()) {
+                        (new SwingWorker<Daemon, Void>() {
+                            @Override
+                            protected Daemon doInBackground() throws Exception {
+                                d.start();
+                                return d;
+                            }
+                        }).execute();
+                    } else {
+                        d.start();
+                    }
+                });
+    }
+
+    protected void runApplication() {
+        StartupExtensionPoint bep = Lookup.lookup(StartupExtensionPoint.class);
+        if (bep != null) {
             bep.start();
         }
     }
 
-    protected void startDaemons() {
-        Comparator<Daemon> comparator = (da, db) -> {
-            Daemon.Description descA = da.getClass().getAnnotation(Daemon.Description.class);
-            Daemon.Description descB = db.getClass().getAnnotation(Daemon.Description.class);
-            return descA.priority().compareTo(descB.priority());
-        };
-        Consumer<Daemon> consumer = (d) -> {
-            Daemon.Description desc = d.getClass().getAnnotation(Daemon.Description.class);
-            if (desc.asynch()) {
-                (new SwingWorker<Daemon, Void>() {
-                    @Override
-                    protected Daemon doInBackground() throws Exception {
-                        d.start();
-                        return d;
-                    }
-                }).execute();
-            } else {
-                d.start();
-            }
-        };
-        Lookup.lookupAll(Daemon.class)
-                .stream()
-                .sorted(comparator)
-                .forEach(consumer);
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> (new Runner(args)).runApplication());
     }
-
 }
