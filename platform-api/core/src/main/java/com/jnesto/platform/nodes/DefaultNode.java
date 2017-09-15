@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 JNestoTeam.
+ * Copyright 2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jnesto.platform.lookup;
+package com.jnesto.platform.nodes;
 
-import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
+import java.util.List;
+import javax.swing.ImageIcon;
 
 /**
  *
- * @author Flavio de Vasconcellos Correa
+ * @author Flavio Vasconcellos Correa
  */
-@Retention(value=RUNTIME)
-@Target(value={TYPE})
-public @interface ServiceProvider {
-
-    String id() default "";
-    
-    Class[] service() default {};
-
-    String description() default "";
+public interface DefaultNode<T> {
+    T getContent();
+    String getType();
+    String getDisplayName();
+    Integer getChildCount();
+    ImageIcon getIcon();
+    List<DefaultNode<T>> getChildNodes();
 }

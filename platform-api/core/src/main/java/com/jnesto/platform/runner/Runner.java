@@ -17,6 +17,7 @@ package com.jnesto.platform.runner;
 
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jnesto.platform.daemons.Daemon;
+import com.jnesto.platform.exception.StartupPointNotFoundException;
 import com.jnesto.platform.lookup.Lookup;
 import com.jnesto.platform.messenger.MessengerSingleton;
 import com.jnesto.platform.plugin.PluginManagerService;
@@ -29,13 +30,20 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.slf4j.LoggerFactory;
 
 /**
+ * A classe de início da aplicação.
  *
  * @author Flavio de Vasconcellos Correa
  */
 final class Runner {
 
+    /**
+     * Constrói um objeto Runner.
+     *
+     * @param args matriz de argumentos String
+     */
     protected Runner(String[] args) {
         List<String> largs = Arrays.asList(args);
         if (largs.contains("--guiapp")) {
@@ -46,10 +54,18 @@ final class Runner {
         initializeDaemons();
     }
 
+    /**
+     * Inicializa a camada de mensagem.
+     *
+     */
     protected void initializeMessenger() {
         Lookup.register(MessengerSingleton.getInstance());
     }
 
+    /**
+     * Inicializa a camada de gerenciamento de plugins.
+     *
+     */
     protected void initializePluginManager() {
         PluginManager pluginManager;
         Lookup.register(new PluginManagerService());
@@ -60,14 +76,22 @@ final class Runner {
         }
     }
 
+    /**
+     * Inicializa a camada de aparência por padrão.
+     *
+     */
     protected void initializeLookAndFeel() {
         try {
-            PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceGreen());
+            PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceBlue());
             UIManager.setLookAndFeel(new com.jgoodies.looks.plastic.Plastic3DLookAndFeel());
         } catch (UnsupportedLookAndFeelException ex) {
         }
     }
 
+    /**
+     * Inicializa a camada de Daemons.
+     *
+     */
     protected void initializeDaemons() {
         Lookup.lookupAll(Daemon.class)
                 .stream()
@@ -75,31 +99,50 @@ final class Runner {
                     Daemon.Description descA = da.getClass().getAnnotation(Daemon.Description.class);
                     Daemon.Description descB = db.getClass().getAnnotation(Daemon.Description.class);
                     return descA.priority().compareTo(descB.priority());
-                })
-                .forEach((d) -> {
-                    Daemon.Description desc = d.getClass().getAnnotation(Daemon.Description.class);
-                    if (desc.asynch()) {
-                        (new SwingWorker<Daemon, Void>() {
-                            @Override
-                            protected Daemon doInBackground() throws Exception {
-                                d.start();
-                                return d;
-                            }
-                        }).execute();
-                    } else {
+                }).forEach((d) -> {
+            Daemon.Description desc = d.getClass().getAnnotation(Daemon.Description.class);
+            if (desc.asynch()) {
+                (new SwingWorker<Daemon, Void>() {
+                    @Override
+                    protected Daemon doInBackground() throws Exception {
                         d.start();
+                        return d;
                     }
-                });
+                }).execute();
+            } else {
+                d.start();
+            }
+        });
     }
 
-    protected void runApplication() {
+    /**
+     * Busca e executa a classe de aplicação. No conjunto de plugins é
+     * necessário que haja ao menos uma classe que instancie a classe
+     * StartupExtensionPoint.
+     *
+     * @throws StartupPointNotFoundException
+     */
+    protected void runApplication() throws StartupPointNotFoundException {
         StartupExtensionPoint bep = Lookup.lookup(StartupExtensionPoint.class);
         if (bep != null) {
             bep.start();
+        } else {
+            throw new StartupPointNotFoundException("Não foi definida uma classe de inicialização.");
         }
     }
 
+    /**
+     * Método padrão de início.
+     *
+     * @param args matriz de argumentos.
+     */
     public static void main(String[] args) {
-        EventQueue.invokeLater(() -> (new Runner(args)).runApplication());
+        EventQueue.invokeLater(() -> {
+            try {
+                (new Runner(args)).runApplication();
+            } catch (StartupPointNotFoundException ex) {
+                LoggerFactory.getLogger(Runner.class).error("{}", ex);
+            }
+        });
     }
 }

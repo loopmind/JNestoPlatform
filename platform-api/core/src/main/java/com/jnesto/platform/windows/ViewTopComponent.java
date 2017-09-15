@@ -29,7 +29,7 @@ import ro.fortsoft.pf4j.ExtensionPoint;
  * @author flavio
  */
 public class ViewTopComponent extends JPanel implements ExtensionPoint, TopComponent, DockingListener {
-    Logger log = LoggerFactory.getLogger(ViewTopComponent.class);
+    private Logger log = LoggerFactory.getLogger(ViewTopComponent.class);
     
     private boolean bMaximized = false;
     private boolean bDragStarted = false;

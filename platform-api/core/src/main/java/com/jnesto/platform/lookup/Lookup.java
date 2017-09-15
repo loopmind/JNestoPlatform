@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class Lookup {
 
-    private final static Map<String, Object> mapID = Collections.synchronizedMap(new HashMap<>());
-    private final static Map<Class, Collection> mapClass = Collections.synchronizedMap(new HashMap<>());
+    private final static Map<String, Object> IDMAP = Collections.synchronizedMap(new HashMap<>());
+    private final static Map<Class, Collection> CLASSMAP = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Mapeamento de um objeto concreto baseado em uma classe como chave de
@@ -46,10 +46,10 @@ public final class Lookup {
      */
     public static synchronized void register(Class ref, Object target) {
         if (ref.isInstance(target)) {
-            if (!mapClass.containsKey(ref)) {
-                mapClass.put(ref, Collections.synchronizedList(new LinkedList<>()));
+            if (!CLASSMAP.containsKey(ref)) {
+                CLASSMAP.put(ref, Collections.synchronizedList(new LinkedList<>()));
             }
-            mapClass.get(ref).add(target);
+            CLASSMAP.get(ref).add(target);
         } else {
             throw new RuntimeException(target + " not instance " + ref);
         }
@@ -62,7 +62,9 @@ public final class Lookup {
      * @param target
      */
     public static synchronized void register(String id, Object target) {
-        mapID.put(id, target);
+        if (id != null && !id.isEmpty()) {
+            IDMAP.put(id, target);
+        }
     }
 
     /**
@@ -74,21 +76,25 @@ public final class Lookup {
     public static synchronized void register(Object target) {
         Objects.requireNonNull(target, "target must not be a null.");
         Class clazz = target.getClass();
-        if (clazz.isAnnotationPresent(ServiceProvider.class)) {
-            ServiceProvider lid = (ServiceProvider) clazz.getAnnotation(ServiceProvider.class);
-            Class[] service = lid.service();
-            if (service != null && service.length > 0) {
-                Arrays.asList(service).forEach(s -> {
-                    register(s, target);
-                });
-            }
-            if (!lid.id().isEmpty()) {
-                register(lid.id(), target);
-            }
-            LoggerFactory.getLogger(Lookup.class).debug("Registering {}", lid.id());
-        }
+        if (clazz.isAnnotationPresent(ServiceProvider.class)) { registerService(clazz, target); } 
     }
 
+    private static void registerService(Class clazz, Object target) {
+        ServiceProvider lid = (ServiceProvider) clazz.getAnnotation(ServiceProvider.class);
+        Class[] service = lid.service();
+        if (service != null && service.length > 0) {
+            Arrays.asList(service).forEach(s -> {
+                register(s, target);
+            });
+        }
+        if (!lid.id().isEmpty()) {
+            register(lid.id(), target);
+        }
+        LoggerFactory.getLogger(Lookup.class).debug("Registering {}", lid.id());
+
+    }
+
+  
     /**
      * Remove do registro um objeto concreto.
      *
@@ -99,14 +105,14 @@ public final class Lookup {
         Class clazz = target.getClass();
         if (clazz.isAnnotationPresent(ServiceProvider.class)) {
             ServiceProvider lid = (ServiceProvider) clazz.getAnnotation(ServiceProvider.class);
-            if (!lid.id().isEmpty() && mapID.containsKey(lid.id())) {
-                mapID.remove(lid.id());
+            if (!lid.id().isEmpty() && IDMAP.containsKey(lid.id())) {
+                IDMAP.remove(lid.id());
             }
             Class[] service = lid.service();
             if (service != null) {
                 Arrays.asList(service).forEach(s -> {
-                    if (mapClass.containsKey(s)) {
-                        mapClass.get(s).remove(target);
+                    if (CLASSMAP.containsKey(s)) {
+                        CLASSMAP.get(s).remove(target);
                     }
                 });
             }
@@ -147,8 +153,8 @@ public final class Lookup {
     public static synchronized <T> Collection<? extends T> lookupAll(Class<? extends T> clazz, LookupConstraints lc) {
         Objects.requireNonNull(clazz, "parameter must not be a null.");
         Collection<? extends T> collection = Collections.EMPTY_LIST;
-        if (mapClass.containsKey(clazz)) {
-            collection = mapClass.get(clazz);
+        if (CLASSMAP.containsKey(clazz)) {
+            collection = CLASSMAP.get(clazz);
             if (lc != null) {
                 collection = collection.stream().filter(e -> lc.validate(e)).collect(Collectors.toList());
             }
@@ -173,7 +179,7 @@ public final class Lookup {
     public static synchronized Collection lookupAll(LookupConstraints lc) {
         Objects.requireNonNull(lc, "parameter must not be a null.");
         Collection collection = Collections.synchronizedCollection(new LinkedList());
-        Collections.addAll(collection, mapID.values());
+        Collections.addAll(collection, IDMAP.values());
         collection.stream()
                 .filter(e -> lc.validate(e))
                 .collect(Collectors.toList());
@@ -193,8 +199,8 @@ public final class Lookup {
      */
     public static synchronized <T> T lookup(Class<T> clazz) {
         Objects.requireNonNull(clazz, "clazz must not be a null.");
-        if (mapClass.containsKey(clazz) && !mapClass.get(clazz).isEmpty()) {
-            return (T) mapClass.get(clazz).iterator().next();
+        if (CLASSMAP.containsKey(clazz) && !CLASSMAP.get(clazz).isEmpty()) {
+            return (T) CLASSMAP.get(clazz).iterator().next();
         }
         return null;
     }
@@ -220,8 +226,8 @@ public final class Lookup {
         if (id.isEmpty()) {
             throw new RuntimeException("id must not be a empty.");
         }
-        if (mapID.containsKey(id)) {
-            return (T) mapID.get(id);
+        if (IDMAP.containsKey(id)) {
+            return (T) IDMAP.get(id);
         }
         return null;
     }

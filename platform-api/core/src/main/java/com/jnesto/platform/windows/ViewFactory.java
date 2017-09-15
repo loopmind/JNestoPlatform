@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 flavio.
+ * Copyright 2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,16 +40,12 @@ import org.flexdock.view.Button;
 import org.flexdock.view.Titlebar;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author flavio
+ * @author Flavio de Vasconcellos Correa
  */
 public class ViewFactory extends DockableFactory.Stub {
-
-    private Logger log = LoggerFactory.getLogger(ViewFactory.class);
 
     @Override
     public Component getDockableComponent(String dockableId) {
@@ -65,7 +61,8 @@ public class ViewFactory extends DockableFactory.Stub {
     }
 
     public View createView(TopComponent o) {
-        if (o instanceof Container
+        if (o != null
+                && o instanceof Container
                 && o.getClass().isAnnotationPresent(ServiceProvider.class)
                 && o.getClass().isAnnotationPresent(TopComponent.Description.class)) {
             try {
@@ -97,7 +94,7 @@ public class ViewFactory extends DockableFactory.Stub {
                         view.getActionButton((String) maximizedAction.getValue(AbstractAction.NAME))
                                 .addActionListener((ActionEvent al) -> {
                                     o.onMaximized(!DockingManager.isMaximized(((Button) al.getSource()).getView()));
-                        });
+                                });
                     }
                     //
                     view.getTitlebar().addMouseListener(new MouseAdapter() {
@@ -121,9 +118,11 @@ public class ViewFactory extends DockableFactory.Stub {
     }
 
     public View createView(String dockableId) {
-        Object o = Lookup.lookupById(dockableId);
-        if (o != null && o instanceof TopComponent) {
-            return createView((TopComponent) o);
+        if (dockableId != null) {
+            Object o = Lookup.lookupById(dockableId);
+            if (o != null && o instanceof TopComponent) {
+                return createView((TopComponent) o);
+            }
         }
         return null;
     }
