@@ -16,8 +16,8 @@
 package com.jnesto.platform.plugin;
 
 import com.jnesto.platform.lookup.ServiceProvider;
-import ro.fortsoft.pf4j.DefaultPluginManager;
-import ro.fortsoft.pf4j.PluginManager;
+import org.pf4j.DefaultPluginManager;
+import org.pf4j.PluginManager;
 
 /**
  *

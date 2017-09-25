@@ -25,8 +25,7 @@ import javax.swing.AbstractAction;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.view.View;
-import ro.fortsoft.pf4j.Extension;
-import ro.fortsoft.pf4j.ExtensionPoint;
+import org.pf4j.ExtensionPoint;
 
 /**
  *

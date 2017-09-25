@@ -15,7 +15,8 @@
  */
 package com.jnesto.platform.plugin;
 
-import ro.fortsoft.pf4j.ExtensionPoint;
+import org.pf4j.ExtensionPoint;
+
 
 /**
  * Implements the main extension point in JNestoPlatform.

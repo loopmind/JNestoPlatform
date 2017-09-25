@@ -22,14 +22,14 @@ import com.jnesto.platform.lookup.Lookup;
 import com.jnesto.platform.messenger.MessengerSingleton;
 import com.jnesto.platform.plugin.PluginManagerService;
 import javax.swing.SwingWorker;
-import ro.fortsoft.pf4j.ExtensionPoint;
-import ro.fortsoft.pf4j.PluginManager;
 import com.jnesto.platform.plugin.StartupExtensionPoint;
 import java.awt.EventQueue;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.pf4j.ExtensionPoint;
+import org.pf4j.PluginManager;
 import org.slf4j.LoggerFactory;
 
 /**

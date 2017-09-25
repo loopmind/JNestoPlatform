@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,9 @@ public class FileNode extends AbstractNode {
 
     @Override
     public String getType() {
-        return (content.isDirectory() ? "Directory" : "File");
+        return (content.isDirectory() ? 
+                ResourceBundle.getBundle("com/jnesto/platform/explorer/FileNode").getString("DIRECTORY") : 
+                ResourceBundle.getBundle("com/jnesto/platform/explorer/FileNode").getString("FILE"));
     }
 
     @Override

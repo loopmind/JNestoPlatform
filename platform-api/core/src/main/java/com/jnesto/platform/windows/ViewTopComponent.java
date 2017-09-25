@@ -20,9 +20,9 @@ import javax.swing.JPanel;
 import org.flexdock.docking.event.DockingEvent;
 import org.flexdock.docking.event.DockingListener;
 import org.flexdock.view.actions.DefaultDisplayAction;
+import org.pf4j.ExtensionPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ro.fortsoft.pf4j.ExtensionPoint;
 
 /**
  *

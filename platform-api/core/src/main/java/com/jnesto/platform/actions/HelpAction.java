@@ -21,8 +21,8 @@ import com.jnesto.platform.windows.JMenuAction;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
-import ro.fortsoft.pf4j.Extension;
-import ro.fortsoft.pf4j.ExtensionPoint;
+import org.pf4j.Extension;
+import org.pf4j.ExtensionPoint;
 
 /**
  *
