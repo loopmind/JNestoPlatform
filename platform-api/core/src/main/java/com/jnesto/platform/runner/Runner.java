@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Flavio de Vasconcellos Correa
  */
-final class Runner {
+public final class Runner {
 
     /**
      * Constrói um objeto Runner.
