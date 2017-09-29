@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  *
- * @author Flávio de Vasconcellos Corrêa loopmind2 at gmail.com
+ * @author Flavio de Vasconcellos Correa
  */
 @Retention(value = RUNTIME)
 @Target(value = {TYPE})

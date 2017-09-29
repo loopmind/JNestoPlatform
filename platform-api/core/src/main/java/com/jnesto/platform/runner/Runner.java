@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 JNesto Team.
+ * Copyright (c) 2015-2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package com.jnesto.platform.runner;
 
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jnesto.platform.daemons.Daemon;
-import com.jnesto.platform.exception.StartupPointNotFoundException;
+import com.jnesto.platform.exception.StartupExtensionPointNotFoundException;
 import com.jnesto.platform.lookup.Lookup;
 import com.jnesto.platform.messenger.MessengerSingleton;
 import com.jnesto.platform.plugin.PluginManagerService;
@@ -30,6 +30,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pf4j.ExtensionPoint;
 import org.pf4j.PluginManager;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -38,13 +39,18 @@ import org.slf4j.LoggerFactory;
  * @author Flavio de Vasconcellos Correa
  */
 public final class Runner {
-
+    private static Logger LOG;
+    
+    static {
+        LOG = LoggerFactory.getLogger(Runner.class);
+    }
     /**
      * Constrói um objeto Runner.
      *
      * @param args matriz de argumentos String
      */
     protected Runner(String[] args) {
+        LOG.info("Start application...");
         List<String> largs = Arrays.asList(args);
         if (largs.contains("--guiapp")) {
             initializeLookAndFeel();
@@ -59,6 +65,7 @@ public final class Runner {
      *
      */
     protected void initializeMessenger() {
+        LOG.info("Initialize Messenger System...");
         Lookup.register(MessengerSingleton.getInstance());
     }
 
@@ -67,6 +74,7 @@ public final class Runner {
      *
      */
     protected void initializePluginManager() {
+        LOG.info("Initialize PluginManager System...");
         PluginManager pluginManager;
         Lookup.register(new PluginManagerService());
         if ((pluginManager = Lookup.lookup(PluginManager.class)) != null) {
@@ -93,6 +101,7 @@ public final class Runner {
      *
      */
     protected void initializeDaemons() {
+        LOG.info("Initialize Daemon System...");
         Lookup.lookupAll(Daemon.class)
                 .stream()
                 .sorted((da, db) -> {
@@ -108,6 +117,12 @@ public final class Runner {
                         d.start();
                         return d;
                     }
+
+                    @Override
+                    protected void done() {
+                        LOG.info("Daemon {} is completed.", desc);
+                    }
+                    
                 }).execute();
             } else {
                 d.start();
@@ -120,14 +135,14 @@ public final class Runner {
      * necessário que haja ao menos uma classe que instancie a classe
      * StartupExtensionPoint.
      *
-     * @throws StartupPointNotFoundException
+     * @throws StartupExtensionPointNotFoundException
      */
-    protected void runApplication() throws StartupPointNotFoundException {
+    protected void runApplication() throws StartupExtensionPointNotFoundException {
         StartupExtensionPoint bep = Lookup.lookup(StartupExtensionPoint.class);
         if (bep != null) {
             bep.start();
         } else {
-            throw new StartupPointNotFoundException("Não foi definida uma classe de inicialização.");
+            throw new StartupExtensionPointNotFoundException("StartupExtensionPoint is necessary.");
         }
     }
 
@@ -140,7 +155,7 @@ public final class Runner {
         EventQueue.invokeLater(() -> {
             try {
                 (new Runner(args)).runApplication();
-            } catch (StartupPointNotFoundException ex) {
+            } catch (StartupExtensionPointNotFoundException ex) {
                 LoggerFactory.getLogger(Runner.class).error("{}", ex);
             }
         });

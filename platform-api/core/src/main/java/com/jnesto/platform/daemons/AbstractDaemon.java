@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2017 JNesto Team.
+ * Copyright 2015-2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDaemon implements Daemon {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private static final Logger log = LoggerFactory.getLogger(AbstractDaemon.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractDaemon.class);
 
     public static String PROP_MESSAGESTATUS = "messageStatus";
     public static String PROP_STATUS = "status";
@@ -46,25 +46,25 @@ public abstract class AbstractDaemon implements Daemon {
 
     @Override
     public void start() {
-        log.info("Start Daemon in {}", this);
+        LOG.info("Start Daemon in {}", this);
         setStatus(Status.ON);
     }
 
     @Override
     public void stop() {
-        log.info("Stop Daemon in {}", this);
+        LOG.info("Stop Daemon in {}", this);
         setStatus(Status.OFF);
     }
 
     @Override
     public void addDaemonListener(DaemonListener l) {
-        log.debug("Add listener {} in {}", l, this);
+        LOG.debug("Add listener {} in {}", l, this);
         listeners.add(l);
     }
 
     @Override
     public void removeDaemonListener(DaemonListener l) {
-        log.debug("Remove listener {} in {}", l, this);
+        LOG.debug("Remove listener {} in {}", l, this);
         listeners.remove(l);
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractDaemon implements Daemon {
 
     @Override
     public void performedDaemonListeners() {
-        log.debug("performedDaemonListeners in {}", this);
+        LOG.debug("performedDaemonListeners in {}", this);
         listeners.parallelStream().forEach(l -> l.daemonPerformed(new DaemonEvent(this)));
     }
 

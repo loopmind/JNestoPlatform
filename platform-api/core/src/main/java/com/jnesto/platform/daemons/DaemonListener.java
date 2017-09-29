@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 flavio.
+ * Copyright 2015-2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package com.jnesto.platform.daemons;
 
 /**
  *
- * @author flavio
+ * @author Flavio de Vasconcellos Correa
  */
 public interface DaemonListener {
     public void daemonPerformed(DaemonEvent e);

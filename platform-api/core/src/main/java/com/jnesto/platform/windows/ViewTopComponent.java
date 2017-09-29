@@ -21,15 +21,12 @@ import org.flexdock.docking.event.DockingEvent;
 import org.flexdock.docking.event.DockingListener;
 import org.flexdock.view.actions.DefaultDisplayAction;
 import org.pf4j.ExtensionPoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author flavio
  */
 public class ViewTopComponent extends JPanel implements ExtensionPoint, TopComponent, DockingListener {
-    private Logger log = LoggerFactory.getLogger(ViewTopComponent.class);
     
     private boolean bMaximized = false;
     private boolean bDragStarted = false;

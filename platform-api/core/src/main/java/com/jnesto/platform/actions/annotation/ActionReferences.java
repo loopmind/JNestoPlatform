@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 JNestoTeam.
+ * Copyright 2015-2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * Anotação agrupadora de @see{ActionReference.class}.
  * 
- * @author Flávio de Vasconcellos Corrêa loopmind2 at gmail.com
+ * @author Flavio de Vasconcellos Correa
  */
 @Retention(value=RUNTIME)
 @Target(value={TYPE})

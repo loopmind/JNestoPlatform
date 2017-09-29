@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 - 2017 JNesto Team.
+ * Copyright 2015-2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -58,8 +57,6 @@ import javax.swing.ImageIcon;
 import org.flexdock.view.View;
 import org.flexdock.view.actions.DefaultDisplayAction;
 import org.jdesktop.beansbinding.BindingGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -67,11 +64,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class ComponentFactory {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ComponentFactory.class);
-
     private final static String MENUBARTAG = "MENU";
     private final static String TOOLBARTAG = "TOOLBAR";
     private final static String PATHSEPARATOR = "/";
+    private final static String SELECTED_TAG = "selected";
 
     public static JToolBar createJToolbar(Collection<? extends JToolBarAction> actions) {
         return createJToolbar(actions, new JToolBar());
@@ -120,14 +116,14 @@ public final class ComponentFactory {
         return createJMenuBar(actions, new JMenuBar());
     }
 
-    final static Map<String, Component> mapComp = new HashMap<>();
-    final static Map<String, ButtonGroup> btnGroupMap = new HashMap<>();
-    final static BindingGroup bg = new BindingGroup();
+    final static Map<String, Component> COMP_MAP = new HashMap<>();
+    final static Map<String, ButtonGroup> BTNGROUP_MAP = new HashMap<>();
+    final static BindingGroup BINDING_GROUP = new BindingGroup();
 
     public static JMenuBar createJMenuBar(Collection<? extends Object> actions, JMenuBar mbar) {
         Objects.requireNonNull(actions);
 
-        mapComp.put(MENUBARTAG, mbar);
+        COMP_MAP.put(MENUBARTAG, mbar);
 
         Predicate predicate = a
                 -> ((a.getClass().isAnnotationPresent(ActionReferences.class)
@@ -144,7 +140,7 @@ public final class ComponentFactory {
         Consumer consumer = a -> {
             ActionReference ar = loadActionReferenceByTag(a.getClass(), MENUBARTAG);
             if (ar != null) {
-                Component comp = mapComp.get(ar.path());
+                Component comp = COMP_MAP.get(ar.path());
                 if (comp != null) {
                     Component item = null;
                     if (a instanceof JMenuItemAction) {
@@ -152,15 +148,15 @@ public final class ComponentFactory {
                     } else {
                         if (a instanceof JCheckBoxAction) {
                             item = new JCheckBoxMenuItem((JCheckBoxAction) a);
-                            JNestoTools.bindBuilder((JCheckBoxAction) a, "selected", (JCheckBoxMenuItem) item, "selected").bind();
+                            JNestoTools.bindBuilder((JCheckBoxAction) a, SELECTED_TAG, (JCheckBoxMenuItem) item, SELECTED_TAG).bind();
                         } else {
                             if (a instanceof JRadioButtonAction) {
                                 item = new JRadioButtonMenuItem((JRadioButtonAction) a);
-                                if (!btnGroupMap.containsKey(ar.path())) {
-                                    btnGroupMap.put(ar.path(), new ButtonGroup());
+                                if (!BTNGROUP_MAP.containsKey(ar.path())) {
+                                    BTNGROUP_MAP.put(ar.path(), new ButtonGroup());
                                 }
-                                btnGroupMap.get(ar.path()).add((JRadioButtonMenuItem) item);
-                                JNestoTools.bindBuilder((JRadioButtonAction) a, "selected", (JRadioButtonMenuItem) item, "selected").bind();
+                                BTNGROUP_MAP.get(ar.path()).add((JRadioButtonMenuItem) item);
+                                JNestoTools.bindBuilder((JRadioButtonAction) a, SELECTED_TAG, (JRadioButtonMenuItem) item, SELECTED_TAG).bind();
                             } else {
                                 if (a instanceof JMenuAction) {
                                     item = new JMenu((JMenuAction) a);
@@ -206,7 +202,7 @@ public final class ComponentFactory {
                             }
                         }
                     }
-                    mapComp.put(ar.path() + PATHSEPARATOR + ar.id(), item);
+                    COMP_MAP.put(ar.path() + PATHSEPARATOR + ar.id(), item);
                 }
             }
         };
@@ -215,7 +211,7 @@ public final class ComponentFactory {
                 .filter(predicate)
                 .sorted(comparator)
                 .forEach(consumer);
-        bg.bind();
+        BINDING_GROUP.bind();
         return mbar;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 flavio.
+ * Copyright 2015-2017 JNesto Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,14 @@ package com.jnesto.platform.exception;
  * 
  * @author Flavio de Vasconcellos Correa
  */
-public class StartupPointNotFoundException extends Exception {
+public class StartupExtensionPointNotFoundException extends Exception {
 
     /**
      * Constrói um objeto StartupPointNotFoundException.
      *
      * @param s uma mensagem String
      */
-    public StartupPointNotFoundException(String s) {
+    public StartupExtensionPointNotFoundException(String s) {
         super(s);
     }
 
