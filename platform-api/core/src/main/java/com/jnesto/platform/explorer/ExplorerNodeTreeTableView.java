@@ -15,9 +15,12 @@
  */
 package com.jnesto.platform.explorer;
 
-import com.jnesto.platform.treetable.DefaultNodeModel;
+import com.jnesto.platform.nodes.DefaultFileNodeModel;
+import com.jnesto.platform.nodes.FileNode;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -30,8 +33,9 @@ import org.jdesktop.swingx.treetable.TreeTableModel;
  * @author Flavio de Vasconcellos Correa
  */
 public class ExplorerNodeTreeTableView extends JComponent {
+
     private JXTreeTable tree;
-    
+
     public ExplorerNodeTreeTableView(TreeModel model) {
         config(model);
     }
@@ -51,8 +55,18 @@ public class ExplorerNodeTreeTableView extends JComponent {
         JFrame mframe = new JFrame();
         mframe.setSize(new Dimension(640, 480));
         mframe.setLayout(new BorderLayout());
-        mframe.add(new ExplorerNodeTreeTableView(new DefaultNodeModel(new FileNode())));
+        mframe.add(new ExplorerNodeTreeTableView(new DefaultFileNodeModel(new FileNode())));
         mframe.setVisible(true);
+        mframe.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit(0);
+            }
+        }
+        );
+    }
 
+    private static void exit(int code) {
+        System.exit(code);
     }
 }

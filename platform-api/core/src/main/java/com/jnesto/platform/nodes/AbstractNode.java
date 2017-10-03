@@ -23,13 +23,13 @@ import javax.swing.ImageIcon;
  * @author Flavio de Vasconcellos Correa
  * @param <T>
  */
-public class AbstractNode<T> implements DefaultNode {
+public abstract class AbstractNode<T> implements DefaultNode {
 
     @Override
     public T getContent() {
         return null;
     }
-
+    
     @Override
     public String getType() {
         return null;
@@ -54,5 +54,8 @@ public class AbstractNode<T> implements DefaultNode {
     public List<DefaultNode<T>> getChildNodes() {
         return null;
     }
+
+    @Override
+    public abstract void setContent(Object content);
 
 }

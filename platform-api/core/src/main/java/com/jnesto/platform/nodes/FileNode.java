@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jnesto.platform.explorer;
+package com.jnesto.platform.nodes;
 
 import com.jnesto.platform.nodes.AbstractNode;
 import java.io.File;
@@ -35,7 +35,7 @@ public class FileNode extends AbstractNode {
     private final Logger log = LoggerFactory.getLogger(FileNode.class);
     private List<FileNode> childs;
 
-    private final File content;
+    private File content;
 
     public FileNode() {
         this(new File(File.separator));
@@ -49,12 +49,17 @@ public class FileNode extends AbstractNode {
     public Object getContent() {
         return content;
     }
+    
+    @Override
+    public void setContent(Object content) {
+        this.content = (File) content;
+    }
 
     @Override
     public String getType() {
         return (content.isDirectory() ? 
-                ResourceBundle.getBundle("com/jnesto/platform/explorer/FileNode").getString("DIRECTORY") : 
-                ResourceBundle.getBundle("com/jnesto/platform/explorer/FileNode").getString("FILE"));
+                ResourceBundle.getBundle("resources/i18n/FileNode").getString("DIRECTORY") : 
+                ResourceBundle.getBundle("resources/i18n/FileNode").getString("FILE"));
     }
 
     @Override

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jnesto.platform.treetable;
+package com.jnesto.platform.nodes;
 
-import com.jnesto.platform.nodes.DefaultNode;
 import java.util.ResourceBundle;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 
@@ -26,9 +25,10 @@ import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 public class DefaultNodeModel extends AbstractTreeTableModel {
 
     protected static String[] columnNames = {
-        ResourceBundle.getBundle("com/jnesto/platform/treetable/DefaultNodeModel").getString("DESCRIPTION"),
-        ResourceBundle.getBundle("com/jnesto/platform/treetable/DefaultNodeModel").getString("TYPE")
+        ResourceBundle.getBundle("resources/i18n/DefaultNodeModel").getString("DESCRIPTION"),
+        ResourceBundle.getBundle("resources/i18n/DefaultNodeModel").getString("TYPE")
     };
+    
     protected static Class[] columnClasses = {
         String.class,
         String.class

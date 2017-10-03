@@ -24,6 +24,7 @@ import javax.swing.ImageIcon;
  */
 public interface DefaultNode<T> {
     T getContent();
+    void setContent(T content);
     String getType();
     String getDisplayName();
     Integer getChildCount();
