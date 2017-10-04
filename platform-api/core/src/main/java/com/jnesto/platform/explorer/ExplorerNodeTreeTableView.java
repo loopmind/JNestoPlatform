@@ -15,8 +15,8 @@
  */
 package com.jnesto.platform.explorer;
 
-import com.jnesto.platform.nodes.DefaultFileNodeModel;
-import com.jnesto.platform.nodes.FileNode;
+import com.jnesto.platform.nodes.DocumentFileNode;
+import com.jnesto.platform.nodes.DocumentFileNodeModel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -55,7 +55,7 @@ public class ExplorerNodeTreeTableView extends JComponent {
         JFrame mframe = new JFrame();
         mframe.setSize(new Dimension(640, 480));
         mframe.setLayout(new BorderLayout());
-        mframe.add(new ExplorerNodeTreeTableView(new DefaultFileNodeModel(new FileNode())));
+        mframe.add(new ExplorerNodeTreeTableView(new DocumentFileNodeModel(new DocumentFileNode())));
         mframe.setVisible(true);
         mframe.addWindowListener(new WindowAdapter() {
             @Override

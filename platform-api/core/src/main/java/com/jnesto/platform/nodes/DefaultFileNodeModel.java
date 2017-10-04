@@ -17,8 +17,8 @@ package com.jnesto.platform.nodes;
 
 import java.io.File;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -28,16 +28,16 @@ import java.util.ResourceBundle;
 public class DefaultFileNodeModel extends DefaultNodeModel {
 
     protected static String[] columnFileNames = {
-        "", 
+        "",
         "",
         ResourceBundle.getBundle("resources/i18n/DefaultFileNodeModel").getString("SIZE"),
-        ResourceBundle.getBundle("resources/i18n/DefaultFileNodeModel").getString("LASTMODIFIED")    
+        ResourceBundle.getBundle("resources/i18n/DefaultFileNodeModel").getString("LASTMODIFIED")
     };
 
     protected static Class[] columnFileClasses = {
         null,
         null,
-        String.class,
+        Long.class,
         Date.class
     };
 
@@ -60,18 +60,42 @@ public class DefaultFileNodeModel extends DefaultNodeModel {
                 case 1:
                     return super.getValueAt(node, column);
                 case 2:
-                    return content.isDirectory() ? 
-                            null :  
-                            NumberFormat.getIntegerInstance().format(content.length()).concat(" bytes");
+                    return content.isDirectory()
+                            ? null
+                            : convertIntToByteMask(content.length());
                 case 3:
-                    return content.isDirectory() ? 
-                            null : 
-                            content.lastModified();
+                    return content.isDirectory()
+                            ? null
+                            : "  ".concat(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(content.lastModified()));
                 default:
                     return null;
             }
         }
         return null;
+
+    }
+
+    protected String convertIntToByteMask(long len) {
+        long clen = 0;
+        if (len >= 1000 && len < 1000000) {
+            clen = len / 1000;
+        } else if (len >= 1000000 && len < 1000000000) {
+            clen = len / 1000000;
+        } else if (len >= 1000000000) {
+            clen = len / 1000000000;
+        } else {
+            clen = len;
+        }
+        String sLen = NumberFormat.getIntegerInstance().format(clen);
+        if (len >= 1000 && len < 1000000) {
+            return sLen + " KB";
+        } else if (len >= 1000000 && len < 1000000000) {
+            return sLen + " MB";
+        } else if (len >= 1000000000) {
+            return sLen + " GB";
+        } else {
+            return sLen + " B";
+        }
     }
 
     @Override
@@ -93,6 +117,6 @@ public class DefaultFileNodeModel extends DefaultNodeModel {
                 return super.getColumnClass(column);
             default:
                 return columnFileClasses[column];
-        }        
+        }
     }
 }
