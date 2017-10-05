@@ -16,6 +16,10 @@
 package com.jnesto.platform.nodes;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FileNode extends AbstractNode {
 
+    private BasicFileAttributes attributes;
     private final Logger log = LoggerFactory.getLogger(FileNode.class);
     private List<FileNode> childs;
 
@@ -42,23 +47,28 @@ public class FileNode extends AbstractNode {
 
     public FileNode(File content) {
         this.content = content;
+        try {
+            attributes = Files.readAttributes(this.content.toPath(), BasicFileAttributes.class);
+        } catch (IOException exception) { }
+
     }
 
     @Override
     public Object getContent() {
         return content;
     }
-    
+
     @Override
-    public void setContent(Object content) {
+    public void setContent(Object content
+    ) {
         this.content = (File) content;
     }
 
     @Override
     public String getType() {
-        return (content.isDirectory() ? 
-                ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("DIRECTORY") : 
-                ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("FILE"));
+        return (content.isDirectory()
+                ? ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("DIRECTORY")
+                : ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("FILE"));
     }
 
     @Override
@@ -90,6 +100,18 @@ public class FileNode extends AbstractNode {
                     .forEach(name -> childs.add(new FileNode(new File((File) content, name))));
         }
         return childs != null ? childs : Collections.EMPTY_LIST;
+    }
+    
+    public FileTime creationTime() {
+        return attributes.creationTime();
+    }
+    
+    public boolean isRegularFile() {
+        return attributes.isRegularFile();
+    }
+    
+    public boolean isDirectory() {
+        return attributes.isDirectory();
     }
 
 }
