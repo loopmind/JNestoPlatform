@@ -15,7 +15,7 @@
  */
 package com.jnesto.platform.nodes;
 
-import java.util.Date;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -24,13 +24,13 @@ import java.util.Date;
 public class DocumentFileNodeModel extends DefaultFileNodeModel {
 
     protected static String[] columnDocFileNames = {
-        "",
-        "",
-        "",
-        "",
-        "Autores",
-        "Assunto",
-        "Modelo"
+        null,
+        null,
+        null,
+        null,
+        ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("AUTHORS"),
+        ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("SUBJECT"),
+        ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("WIZARD")
     };
 
     protected static Class[] columnDocFileClasses = {
@@ -67,7 +67,7 @@ public class DocumentFileNodeModel extends DefaultFileNodeModel {
                     return ((DocumentFileNode) root).getSubject();
                 case 6:
                     return ((DocumentFileNode) root).getModel();
-                    
+
                 default:
                     return null;
             }
