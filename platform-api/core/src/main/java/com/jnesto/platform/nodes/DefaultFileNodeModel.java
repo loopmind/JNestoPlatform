@@ -28,10 +28,10 @@ import java.util.ResourceBundle;
 public class DefaultFileNodeModel extends DefaultNodeModel {
 
     protected static String[] columnFileNames = {
-        "",
-        "",
-        ResourceBundle.getBundle("resources/i18n/DefaultFileNodeModel").getString("SIZE"),
-        ResourceBundle.getBundle("resources/i18n/DefaultFileNodeModel").getString("LASTMODIFIED")
+        null,
+        null,
+        ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("SIZE"),
+        ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("LASTMODIFIED")
     };
 
     protected static Class[] columnFileClasses = {
