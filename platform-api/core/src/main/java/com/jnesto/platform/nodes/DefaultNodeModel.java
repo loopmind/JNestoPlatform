@@ -25,8 +25,8 @@ import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 public class DefaultNodeModel extends AbstractTreeTableModel {
 
     protected static String[] columnNames = {
-        ResourceBundle.getBundle("resources/i18n/DefaultNodeModel").getString("DESCRIPTION"),
-        ResourceBundle.getBundle("resources/i18n/DefaultNodeModel").getString("TYPE")
+        ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("DESCRIPTION"),
+        ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("TYPE")
     };
     
     protected static Class[] columnClasses = {
