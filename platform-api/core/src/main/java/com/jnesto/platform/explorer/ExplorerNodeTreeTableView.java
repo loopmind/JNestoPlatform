@@ -15,10 +15,11 @@
  */
 package com.jnesto.platform.explorer;
 
+import com.jnesto.platform.nodes.DefaultNodeModel;
 import com.jnesto.platform.nodes.DocumentFileNode;
-import com.jnesto.platform.nodes.DocumentFileNodeModel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JComponent;
@@ -34,39 +35,55 @@ import org.jdesktop.swingx.treetable.TreeTableModel;
  */
 public class ExplorerNodeTreeTableView extends JComponent {
 
-    private JXTreeTable tree;
-
     public ExplorerNodeTreeTableView(TreeModel model) {
         config(model);
     }
 
     private void config(TreeModel model) {
-        tree = new JXTreeTable((TreeTableModel) model);
-        tree.setDragEnabled(true);
-        tree.setRootVisible(false);
-        tree.setShowsRootHandles(true);
-        tree.setColumnControlVisible(true);
         setLayout(new BorderLayout());
-        add(new JScrollPane(tree), BorderLayout.CENTER);
-        tree.setRolloverEnabled(true);
+        add(new JScrollPane(new FileNodeTreeTable((TreeTableModel) model)), BorderLayout.CENTER);
+
     }
 
     public static void main(String[] args) {
-        JFrame mframe = new JFrame();
-        mframe.setSize(new Dimension(640, 480));
-        mframe.setLayout(new BorderLayout());
-        mframe.add(new ExplorerNodeTreeTableView(new DocumentFileNodeModel(new DocumentFileNode())));
+        JFrame mframe = new ExplorerFrame();
+        mframe.add(new ExplorerNodeTreeTableView(new DefaultNodeModel(new DocumentFileNode())));
         mframe.setVisible(true);
-        mframe.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                exit(0);
-            }
-        }
-        );
     }
 
-    private static void exit(int code) {
-        System.exit(code);
+    static class ExplorerFrame extends JFrame {
+
+        public ExplorerFrame() throws HeadlessException {
+            init();
+        }
+
+        private void init() {
+            setSize(new Dimension(640, 480));
+            setLayout(new BorderLayout());
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+        }
+
+    }
+
+    static class FileNodeTreeTable extends JXTreeTable {
+
+        public FileNodeTreeTable(TreeTableModel treeModel) {
+            super(treeModel);
+            init();
+        }
+
+        private void init() {
+            setDragEnabled(true);
+            setRootVisible(false);
+            setShowsRootHandles(true);
+            setColumnControlVisible(true);
+            setRolloverEnabled(true);
+        }
+
     }
 }
