@@ -15,6 +15,7 @@
  */
 package com.jnesto.platform.nodes;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.swing.ImageIcon;
 
@@ -23,7 +24,7 @@ import javax.swing.ImageIcon;
  * @author Flavio de Vasconcellos Correa
  * @param <T>
  */
-public abstract class AbstractNode<T> implements DefaultNode {
+public abstract class AbstractNode<T> implements DefaultNode, Serializable {
 
     @Override
     public T getContent() {
