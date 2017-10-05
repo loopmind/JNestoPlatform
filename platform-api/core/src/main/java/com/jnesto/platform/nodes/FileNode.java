@@ -15,7 +15,6 @@
  */
 package com.jnesto.platform.nodes;
 
-import com.jnesto.platform.nodes.AbstractNode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,8 +57,8 @@ public class FileNode extends AbstractNode {
     @Override
     public String getType() {
         return (content.isDirectory() ? 
-                ResourceBundle.getBundle("resources/i18n/FileNode").getString("DIRECTORY") : 
-                ResourceBundle.getBundle("resources/i18n/FileNode").getString("FILE"));
+                ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("DIRECTORY") : 
+                ResourceBundle.getBundle("com/jnesto/platform/nodes/resources/Bundle").getString("FILE"));
     }
 
     @Override
