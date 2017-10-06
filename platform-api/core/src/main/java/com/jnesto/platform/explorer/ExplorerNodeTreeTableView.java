@@ -41,13 +41,22 @@ public class ExplorerNodeTreeTableView extends JComponent {
 
     private void config(TreeModel model) {
         setLayout(new BorderLayout());
-        add(new JScrollPane(new FileNodeTreeTable((TreeTableModel) model)), BorderLayout.CENTER);
+        add(
+                new JScrollPane(
+                        new FileNodeTreeTable((TreeTableModel) model)
+                )
+                , BorderLayout.CENTER
+        );
 
     }
 
     public static void main(String[] args) {
         JFrame mframe = new ExplorerFrame();
-        mframe.add(new ExplorerNodeTreeTableView(new DefaultFileNodeModel(new FileNode())));
+        mframe.add(
+                new ExplorerNodeTreeTableView(
+                        new DefaultFileNodeModel(new FileNode())
+                )
+        );
         mframe.setVisible(true);
     }
 
