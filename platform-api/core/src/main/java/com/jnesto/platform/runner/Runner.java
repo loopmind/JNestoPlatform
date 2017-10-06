@@ -24,6 +24,8 @@ import com.jnesto.platform.plugin.PluginManagerService;
 import javax.swing.SwingWorker;
 import com.jnesto.platform.plugin.StartupExtensionPoint;
 import java.awt.EventQueue;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.UIManager;
@@ -40,6 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class Runner {
     private static Logger LOG;
+    private Path pluginPath;
     
     static {
         LOG = LoggerFactory.getLogger(Runner.class);
@@ -54,6 +57,9 @@ public final class Runner {
         List<String> largs = Arrays.asList(args);
         if (largs.contains("--guiapp")) {
             initializeLookAndFeel();
+        }
+        if(largs.contains("--plugindir")) {
+            pluginPath = Paths.get(largs.get(largs.indexOf("--plugindir")+1));
         }
         initializeMessenger();
         initializePluginManager();
@@ -76,7 +82,7 @@ public final class Runner {
     protected void initializePluginManager() {
         LOG.info("Initialize PluginManager System...");
         PluginManager pluginManager;
-        Lookup.register(new PluginManagerService());
+        Lookup.register(new PluginManagerService(pluginPath));
         if ((pluginManager = Lookup.lookup(PluginManager.class)) != null) {
             pluginManager.loadPlugins();
             pluginManager.startPlugins();
