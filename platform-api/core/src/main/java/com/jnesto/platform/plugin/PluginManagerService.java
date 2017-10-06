@@ -16,6 +16,7 @@
 package com.jnesto.platform.plugin;
 
 import com.jnesto.platform.lookup.ServiceProvider;
+import java.nio.file.Path;
 import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginManager;
 
@@ -28,4 +29,8 @@ import org.pf4j.PluginManager;
         service = PluginManager.class
 )
 public class PluginManagerService extends DefaultPluginManager {
+
+    public PluginManagerService(Path pluginPath) {
+        super(pluginPath);
+    }
 }
