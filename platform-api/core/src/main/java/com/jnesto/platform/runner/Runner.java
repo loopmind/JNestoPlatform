@@ -56,7 +56,6 @@ public final class Runner {
      * @param args matriz de argumentos String
      */
     protected Runner(String[] args) {
-        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("START APPLICATION..."));
         List<String> largs = Arrays.asList(args);
         if (largs.contains("--development")) {
             System.setProperty("pf4j.mode", RuntimeMode.DEVELOPMENT.toString()); //NOI18N
@@ -77,7 +76,6 @@ public final class Runner {
      *
      */
     protected void initializeMessenger() {
-        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("INITIALIZE MESSENGER SYSTEM..."));
         Lookup.register(MessengerSingleton.getInstance());
     }
 
@@ -86,7 +84,6 @@ public final class Runner {
      *
      */
     protected void initializePluginManager() {
-        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("INITIALIZE PLUGINMANAGER SYSTEM..."));
         PluginManager pluginManager;
         Lookup.register(new PluginManagerService(pluginPath));
         if ((pluginManager = Lookup.lookup(PluginManager.class)) != null) {
@@ -113,7 +110,6 @@ public final class Runner {
      *
      */
     protected void initializeDaemons() {
-        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("INITIALIZE DAEMON SYSTEM..."));
         Lookup.lookupAll(Daemon.class)
                 .stream()
                 .sorted((da, db) -> {
@@ -132,7 +128,7 @@ public final class Runner {
 
                             @Override
                             protected void done() {
-                                LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("DAEMON {} IS COMPLETED."), d.getClass().getAnnotation(Daemon.Description.class));
+                                LOG.info("Daemon '{}' completed.", d.getClass().getAnnotation(Daemon.Description.class));
                             }
 
                         }).execute();
@@ -155,7 +151,7 @@ public final class Runner {
             bep.start();
             return;
         }
-        throw new StartupExtensionPointNotFoundException(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("STARTUPEXTENSIONPOINT IS NECESSARY."));
+        throw new StartupExtensionPointNotFoundException("StartupExtensionPoint class not found.");
     }
 
     /**
