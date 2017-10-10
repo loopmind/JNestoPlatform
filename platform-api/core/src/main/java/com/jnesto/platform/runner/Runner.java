@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pf4j.ExtensionPoint;
 import org.pf4j.PluginManager;
+import org.pf4j.RuntimeMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,25 +42,30 @@ import org.slf4j.LoggerFactory;
  * @author Flavio de Vasconcellos Correa
  */
 public final class Runner {
-    private static Logger LOG;
+
+    private static final Logger LOG;
     private Path pluginPath;
-    
+
     static {
         LOG = LoggerFactory.getLogger(Runner.class);
     }
+
     /**
      * Constrói um objeto Runner.
      *
      * @param args matriz de argumentos String
      */
     protected Runner(String[] args) {
-        LOG.info("Start application...");
+        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("START APPLICATION..."));
         List<String> largs = Arrays.asList(args);
-        if (largs.contains("--guiapp")) {
+        if (largs.contains("--development")) {
+            System.setProperty("pf4j.mode", RuntimeMode.DEVELOPMENT.toString()); //NOI18N
+        }
+        if (largs.contains("--guiapp")) { //NOI18N
             initializeLookAndFeel();
         }
-        if(largs.contains("--plugindir")) {
-            pluginPath = Paths.get(largs.get(largs.indexOf("--plugindir")+1));
+        if (largs.contains("--plugindir")) { //NOI18N
+            pluginPath = Paths.get(largs.get(largs.indexOf("--plugindir") + 1)); //NOI18N
         }
         initializeMessenger();
         initializePluginManager();
@@ -71,7 +77,7 @@ public final class Runner {
      *
      */
     protected void initializeMessenger() {
-        LOG.info("Initialize Messenger System...");
+        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("INITIALIZE MESSENGER SYSTEM..."));
         Lookup.register(MessengerSingleton.getInstance());
     }
 
@@ -80,7 +86,7 @@ public final class Runner {
      *
      */
     protected void initializePluginManager() {
-        LOG.info("Initialize PluginManager System...");
+        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("INITIALIZE PLUGINMANAGER SYSTEM..."));
         PluginManager pluginManager;
         Lookup.register(new PluginManagerService(pluginPath));
         if ((pluginManager = Lookup.lookup(PluginManager.class)) != null) {
@@ -107,33 +113,33 @@ public final class Runner {
      *
      */
     protected void initializeDaemons() {
-        LOG.info("Initialize Daemon System...");
+        LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("INITIALIZE DAEMON SYSTEM..."));
         Lookup.lookupAll(Daemon.class)
                 .stream()
                 .sorted((da, db) -> {
-                    Daemon.Description descA = da.getClass().getAnnotation(Daemon.Description.class);
-                    Daemon.Description descB = db.getClass().getAnnotation(Daemon.Description.class);
-                    return descA.priority().compareTo(descB.priority());
-                }).forEach((d) -> {
-            Daemon.Description desc = d.getClass().getAnnotation(Daemon.Description.class);
-            if (desc.asynch()) {
-                (new SwingWorker<Daemon, Void>() {
-                    @Override
-                    protected Daemon doInBackground() throws Exception {
-                        d.start();
-                        return d;
-                    }
+                    return (da.getClass().getAnnotation(Daemon.Description.class)).priority().compareTo(
+                            (db.getClass().getAnnotation(Daemon.Description.class)).priority()
+                    );
+                })
+                .forEach((d) -> {
+                    if ((d.getClass().getAnnotation(Daemon.Description.class)).asynch()) {
+                        (new SwingWorker<Daemon, Void>() {
+                            @Override
+                            protected Daemon doInBackground() throws Exception {
+                                d.start();
+                                return d;
+                            }
 
-                    @Override
-                    protected void done() {
-                        LOG.info("Daemon {} is completed.", desc);
+                            @Override
+                            protected void done() {
+                                LOG.info(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("DAEMON {} IS COMPLETED."), d.getClass().getAnnotation(Daemon.Description.class));
+                            }
+
+                        }).execute();
+                    } else {
+                        d.start();
                     }
-                    
-                }).execute();
-            } else {
-                d.start();
-            }
-        });
+                });
     }
 
     /**
@@ -147,9 +153,9 @@ public final class Runner {
         StartupExtensionPoint bep = Lookup.lookup(StartupExtensionPoint.class);
         if (bep != null) {
             bep.start();
-        } else {
-            throw new StartupExtensionPointNotFoundException("StartupExtensionPoint is necessary.");
+            return;
         }
+        throw new StartupExtensionPointNotFoundException(java.util.ResourceBundle.getBundle("resources/bundle/Bundle").getString("STARTUPEXTENSIONPOINT IS NECESSARY."));
     }
 
     /**
@@ -162,7 +168,7 @@ public final class Runner {
             try {
                 (new Runner(args)).runApplication();
             } catch (StartupExtensionPointNotFoundException ex) {
-                LoggerFactory.getLogger(Runner.class).error("{}", ex);
+                LoggerFactory.getLogger(Runner.class).error("{}", ex); //NOI18N
             }
         });
     }

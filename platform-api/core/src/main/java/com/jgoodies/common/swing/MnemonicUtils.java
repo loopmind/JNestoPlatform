@@ -267,10 +267,8 @@ public final class MnemonicUtils {
      * @see AbstractButton.ButtonActionPropertyChangeListener
      */
     private static void configure0(Action action, MnemonicText mnemonicText) {
-        Integer keyValue = Integer.valueOf(mnemonicText.key);
-        Integer indexValue = mnemonicText.index == -1
-                ? null
-                : Integer.valueOf(mnemonicText.index);
+        Integer keyValue = mnemonicText.key;
+        Integer indexValue = (mnemonicText.index == -1 ? null : mnemonicText.index);
         action.putValue(Action.NAME, mnemonicText.text);
         action.putValue(Action.MNEMONIC_KEY, keyValue);
         action.putValue(Action.DISPLAYED_MNEMONIC_INDEX_KEY, indexValue);
