@@ -45,9 +45,9 @@ public class HelpAction extends AbstractAction implements JMenuAction, Extension
     }
 
     private void init() {
-        putValue(AbstractAction.NAME, "Ajuda");
+        putValue(AbstractAction.NAME, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("HELPACTION_NAME"));
         putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_J);
-        putValue(AbstractAction.SHORT_DESCRIPTION, "Agrupa comandos de ajuda e informações.");
+        putValue(AbstractAction.SHORT_DESCRIPTION, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("HELPACTION_SHORT_DESCRIPTION"));
     }
 
     @Override

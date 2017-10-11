@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -59,9 +60,9 @@ public class CloseWindowAction extends AbstractAction implements JMenuItemAction
     private void init() {
         try {
             putValue(AbstractAction.ACTION_COMMAND_KEY, ((ServiceProvider) getClass().getAnnotation(ServiceProvider.class)).id());
-            putValue(AbstractAction.NAME, "Fechar Janela");
+            putValue(AbstractAction.NAME, ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("CLOSEWINDOWACTION_NAME"));
             putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
-            putValue(AbstractAction.SMALL_ICON, new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/cross.png"))));
+            putValue(AbstractAction.SMALL_ICON, new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/cross.png")))); //NOI18N
         } catch (IOException ex) {
             Logger.getLogger(CloseWindowAction.class.getName()).log(Level.SEVERE, null, ex);
         }

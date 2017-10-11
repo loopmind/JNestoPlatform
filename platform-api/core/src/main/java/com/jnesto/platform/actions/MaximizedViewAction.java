@@ -48,11 +48,11 @@ public class MaximizedViewAction extends AbstractAction implements ExtensionPoin
 
     private void init() {
         try {
-            arrowOut = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_out.png")));
-            arrowIn = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_in.png")));
+            arrowOut = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_out.png"))); //NOI18N
+            arrowIn = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/resources/icons/arrow_in.png"))); //NOI18N
             putValue(AbstractAction.ACTION_COMMAND_KEY, ((ServiceProvider)getClass().getAnnotation(ServiceProvider.class)).id());
-            putValue(AbstractAction.NAME, "Maximiza/Restaura");
-            putValue(AbstractAction.SHORT_DESCRIPTION, "Minimiza visão.");
+            putValue(AbstractAction.NAME, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("MAXIMIZEDVIEWACTION_NAME"));
+            putValue(AbstractAction.SHORT_DESCRIPTION, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("MAXIMIZEDVIEWACTION_SHORT_DESCRIPTION"));
             putValue(AbstractAction.SMALL_ICON, arrowOut);
         } catch (IOException ex) {
         }

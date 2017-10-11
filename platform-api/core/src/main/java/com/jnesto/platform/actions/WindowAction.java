@@ -46,9 +46,9 @@ public class WindowAction extends AbstractAction implements JMenuAction, Extensi
     }
 
     private void init() {
-        putValue(AbstractAction.NAME, "Janela");
+        putValue(AbstractAction.NAME, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("WINDOWACTION_NAME"));
         putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_N);
-        putValue(AbstractAction.SHORT_DESCRIPTION, "Janelas de trabalho.");
+        putValue(AbstractAction.SHORT_DESCRIPTION, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("WINDOWACTION_SHORT_DESCRIPTION"));
     }
 
     @Override

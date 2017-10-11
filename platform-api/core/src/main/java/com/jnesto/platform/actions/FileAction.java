@@ -47,14 +47,14 @@ public class FileAction extends AbstractAction implements JMenuAction, Extension
     }
 
     private void init() {
-        putValue(AbstractAction.NAME, "Arquivo");
+        putValue(AbstractAction.NAME, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("FILEACTION_NAME"));
         putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
-        putValue(AbstractAction.SHORT_DESCRIPTION, "Agrupa comandos de arquivo.");
+        putValue(AbstractAction.SHORT_DESCRIPTION, java.util.ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("FILEACTION_SHORT_DESCRIPTION"));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LoggerFactory.getLogger(FileAction.class).info("actionPerformed '{}'", getValue(AbstractAction.NAME));
+        LoggerFactory.getLogger(FileAction.class).info("actionPerformed '{}'", getValue(AbstractAction.NAME)); //NOI18N
     }
 
 }

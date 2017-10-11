@@ -21,6 +21,7 @@ import com.jnesto.platform.windows.JMenuAction;
 import com.jnesto.platform.windows.JMenuItemAction;
 import com.jnesto.platform.windows.JToolBarAction;
 import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
@@ -50,7 +51,7 @@ public class CloseAllWindowsAction extends AbstractAction implements JMenuItemAc
     }
 
     private void init() {
-        putValue(AbstractAction.NAME, "Fechar Todos os Documentos");
+        putValue(AbstractAction.NAME, ResourceBundle.getBundle("com/jnesto/platform/actions/bundle/Bundle").getString("CLOSEALLWINDOWSACTION_NAME"));
     }
 
     @Override
