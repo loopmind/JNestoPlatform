@@ -23,9 +23,17 @@ import java.util.List;
  */
 public interface MessengerChannel {
 
-    public void setOpen(boolean o);
+    public MessengerChannel setOpen(boolean o);
+    
+    public MessengerChannel setContent(Object content);
+
+    public Object getContent();
 
     public boolean isOpen();
+
+    public List<MessengerChannelListener> getAllMessengerListener();
+
+    public String getDescription();
 
     public void broadcast();
 
@@ -37,11 +45,5 @@ public interface MessengerChannel {
 
     public void reset();
 
-    public List<MessengerChannelListener> getAllMessengerListener();
-
-    public String getDescription();
     
-    public void setContent(Object content);
-    
-    public Object getContent();
 }
