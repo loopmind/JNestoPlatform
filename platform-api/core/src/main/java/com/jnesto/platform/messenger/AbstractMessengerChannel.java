@@ -71,10 +71,12 @@ public abstract class AbstractMessengerChannel implements MessengerChannel {
     }
 
     @Override
-    public void setContent(Object content) {
+    public MessengerChannel setContent(Object content) {
         Object oldContent = this.content;
         this.content = content;
         pcs.firePropertyChange(PROP_CONTENT, oldContent, content);
+
+        return this;
     }
 
     @Override
@@ -87,10 +89,12 @@ public abstract class AbstractMessengerChannel implements MessengerChannel {
     }
 
     @Override
-    public void setOpen(boolean open) {
+    public MessengerChannel setOpen(boolean open) {
         boolean oldOpen = this.open;
         this.open = open;
         pcs.firePropertyChange(PROP_OPEN, oldOpen, open);
+        
+        return this;
     }
 
     @Override
@@ -121,7 +125,7 @@ public abstract class AbstractMessengerChannel implements MessengerChannel {
     public void broadcast() {
         log.debug("Init broadcasting by sender {}", sender);
         if (isOpen()) {
-            listeners.forEach(l -> fireMessagePerformed(l, getSender(), MessageEvent.BROADCAST, getContent()));
+            listeners.parallelStream().forEach(l -> fireMessagePerformed(l, getSender(), MessageEvent.BROADCAST, getContent()));
         }
     }
 
