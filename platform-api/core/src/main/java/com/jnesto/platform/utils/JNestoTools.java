@@ -15,6 +15,7 @@
  */
 package com.jnesto.platform.utils;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -23,7 +24,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -117,11 +117,8 @@ public class JNestoTools {
         final UndoManager undoMgr = new UndoManager();
 
         // Add listener for undoable events
-        textComponent.getDocument().addUndoableEditListener(new UndoableEditListener() {
-            @Override
-            public void undoableEditHappened(UndoableEditEvent evt) {
-                undoMgr.addEdit(evt.getEdit());
-            }
+        textComponent.getDocument().addUndoableEditListener((UndoableEditEvent evt) -> {
+            undoMgr.addEdit(evt.getEdit());
         });
 
         // Add undo/redo actions
@@ -150,5 +147,33 @@ public class JNestoTools {
         // Create keyboard accelerators for undo/redo actions (Ctrl+Z/Ctrl+Y)
         textComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), UNDO_ACTION);
         textComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK), REDO_ACTION);
+    }
+
+    /**
+     * Converts a hex string to a color. If it can't be converted null is
+     * returned.
+     *
+     * @param hex (i.e. #CCCCCCFF or CCCCCC)
+     * @return Color
+     * 
+     * source: https://stackoverflow.com/questions/4129666/how-to-convert-hex-to-rgb-using-java
+     * author: Ian Newland (https://stackoverflow.com/users/2175883/ian-newland)
+     */
+    public static Color HexToColor(String hex) {
+        hex = hex.replace("#", "");
+        switch (hex.length()) {
+            case 6:
+                return new Color(
+                        Integer.valueOf(hex.substring(0, 2), 16),
+                        Integer.valueOf(hex.substring(2, 4), 16),
+                        Integer.valueOf(hex.substring(4, 6), 16));
+            case 8:
+                return new Color(
+                        Integer.valueOf(hex.substring(0, 2), 16),
+                        Integer.valueOf(hex.substring(2, 4), 16),
+                        Integer.valueOf(hex.substring(4, 6), 16),
+                        Integer.valueOf(hex.substring(6, 8), 16));
+        }
+        return null;
     }
 }

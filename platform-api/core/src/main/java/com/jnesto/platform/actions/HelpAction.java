@@ -36,7 +36,7 @@ import org.pf4j.ExtensionPoint;
         id = "HELP",
         path = "MENU"
 )
-@Extension
+@Extension (ordinal = 500)
 public class HelpAction extends AbstractAction implements JMenuAction, ExtensionPoint {
 
     public HelpAction() {

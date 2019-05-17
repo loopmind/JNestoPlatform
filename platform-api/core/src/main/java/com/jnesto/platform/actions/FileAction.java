@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
         path = "MENU",
         position = 100
 )
-@Extension
+@Extension (ordinal = 500)
 public class FileAction extends AbstractAction implements JMenuAction, ExtensionPoint {
 
     public FileAction() {

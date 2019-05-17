@@ -27,22 +27,19 @@ import org.pf4j.ExtensionPoint;
  * @author flavio
  */
 public class ViewTopComponent extends JPanel implements ExtensionPoint, TopComponent, DockingListener {
-    
+
     private boolean bMaximized = false;
     private boolean bDragStarted = false;
 
     public ViewTopComponent() {
-        initializeContent();
+        super();
+        setOpaque(false);
     }
 
-    private void initializeContent() {
-        this.setOpaque(false);
-    }
-    
     public boolean isMaximized() {
         return bMaximized;
     }
-    
+
     public void setMaximized(boolean maximized) {
         this.bMaximized = maximized;
         setEnabledDisplayActions(!maximized);
@@ -56,20 +53,23 @@ public class ViewTopComponent extends JPanel implements ExtensionPoint, TopCompo
     public void onClosed() {
         setMaximized(false);
     }
-    
+
     @Override
     public void onMaximized(boolean isMaximized) {
         setMaximized(isMaximized);
     }
-    
+
     private void setEnabledDisplayActions(boolean isEnable) {
-        Lookup.lookupAll(DefaultDisplayAction.class).stream().forEach(defaulDisplayAction -> defaulDisplayAction.setEnabled(isEnable));
-        
+        Lookup.lookupAll(DefaultDisplayAction.class)
+                .stream()
+                .forEach(defaulDisplayAction -> defaulDisplayAction.setEnabled(isEnable));
     }
 
     @Override
     public void dockingComplete(DockingEvent evt) {
-        if(!bDragStarted) onOpened();
+        if (!bDragStarted) {
+            onOpened();
+        }
         bDragStarted = false;
     }
 
@@ -93,5 +93,5 @@ public class ViewTopComponent extends JPanel implements ExtensionPoint, TopCompo
     @Override
     public void undockingStarted(DockingEvent evt) {
     }
-    
+
 }

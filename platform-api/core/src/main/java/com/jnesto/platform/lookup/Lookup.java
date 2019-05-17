@@ -76,7 +76,9 @@ public final class Lookup {
     public static synchronized void register(Object target) {
         Objects.requireNonNull(target, "target must not be a null.");
         Class clazz = target.getClass();
-        if (clazz.isAnnotationPresent(ServiceProvider.class)) { registerService(clazz, target); } 
+        if (clazz.isAnnotationPresent(ServiceProvider.class)) {
+            registerService(clazz, target);
+        }
     }
 
     private static void registerService(Class clazz, Object target) {
@@ -89,12 +91,13 @@ public final class Lookup {
         }
         if (!lid.id().isEmpty()) {
             register(lid.id(), target);
+            LoggerFactory.getLogger(Lookup.class).info("Registering {} as a service", lid.id());
+        } else {
+            LoggerFactory.getLogger(Lookup.class).info("Register failed to {}", lid.id());
         }
-        LoggerFactory.getLogger(Lookup.class).debug("Registering {}", lid.id());
 
     }
 
-  
     /**
      * Remove do registro um objeto concreto.
      *
@@ -112,7 +115,9 @@ public final class Lookup {
             if (service != null) {
                 Arrays.asList(service).forEach(s -> {
                     if (CLASSMAP.containsKey(s)) {
-                        CLASSMAP.get(s).remove(target);
+                        if (CLASSMAP.get(s).contains(target)) {
+                            CLASSMAP.get(s).remove(target);
+                        }
                     }
                 });
             }
@@ -221,7 +226,7 @@ public final class Lookup {
      * @param id String Chave de identificação de uma instância.
      * @return Um objeto que corresponda a chave de busca.
      */
-    public static synchronized <T> T lookupById(String id) {
+    public static synchronized <T> T lookup(String id) {
         Objects.requireNonNull(id, "id must not be a null.");
         if (id.isEmpty()) {
             throw new RuntimeException("id must not be a empty.");

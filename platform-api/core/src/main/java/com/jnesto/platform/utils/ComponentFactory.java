@@ -17,7 +17,6 @@ package com.jnesto.platform.utils;
 
 import com.jgoodies.common.swing.MnemonicUtils;
 import com.jnesto.platform.actions.annotation.ActionReference;
-import com.jnesto.platform.actions.annotation.ActionReferences;
 import com.jnesto.platform.lookup.Lookup;
 import com.jnesto.platform.lookup.ServiceProvider;
 import com.jnesto.platform.windows.JCheckBoxAction;
@@ -57,6 +56,7 @@ import javax.swing.ImageIcon;
 import org.flexdock.view.View;
 import org.flexdock.view.actions.DefaultDisplayAction;
 import org.jdesktop.beansbinding.BindingGroup;
+import com.jnesto.platform.actions.annotation.ActionReferences;
 
 /**
  *
@@ -225,16 +225,16 @@ public final class ComponentFactory {
                 view.setIcon(icon);
                 view.setTabIcon(icon);
                 if (description.closeable()) {
-                    view.addAction((Action) Lookup.lookupById("#CTL_CLOSEVIEWACTION"));
+                    view.addAction((Action) Lookup.lookup("#CTL_CLOSEVIEWACTION"));
                 }
                 if (description.maximized()) {
-                    view.addAction((Action) Lookup.lookupById("#CTL_MAXIMIZEDVIEWACTION"));
+                    view.addAction((Action) Lookup.lookup("#CTL_MAXIMIZEDVIEWACTION"));
                 }
                 view.getTitlebar().addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getClickCount() == 2) {
-                            Action action = ((Action) Lookup.lookupById("#CTL_MAXIMIZEDVIEWACTION"));
+                            Action action = ((Action) Lookup.lookup("#CTL_MAXIMIZEDVIEWACTION"));
                             ActionEvent evt = new ActionEvent(view, 0, (String) action.getValue(AbstractAction.NAME));
                             action.actionPerformed(evt);
                         }

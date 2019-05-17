@@ -32,9 +32,9 @@ public interface Daemon {
 
         String title();
 
-        String vendor();
+        String vendor() default "";
 
-        String description();
+        String description() default "";
 
         Priority priority() default Priority.LOW;
         

@@ -37,7 +37,7 @@ import org.pf4j.ExtensionPoint;
         path = "MENU",
         position = 400
 )
-@Extension
+@Extension (ordinal = 500)
 public class WindowAction extends AbstractAction implements JMenuAction, ExtensionPoint {
 
     public WindowAction() {

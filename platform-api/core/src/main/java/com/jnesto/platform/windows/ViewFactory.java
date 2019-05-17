@@ -82,13 +82,13 @@ public class ViewFactory extends DockableFactory.Stub {
                         view.addDockingListener((DockingListener) o);
                     }
                     //
-                    final Action closeAction = (Action) Lookup.lookupById("#CTL_CLOSEWINDOWACTION").getClass().newInstance();
+                    final Action closeAction = (Action) Lookup.lookup("#CTL_CLOSEWINDOWACTION").getClass().newInstance();
                     if (description.closeable()) {
                         view.addAction(closeAction);
                         view.getActionButton((String) closeAction.getValue(AbstractAction.NAME)).addActionListener(al -> o.onClosed());
                     }
                     //
-                    final Action maximizedAction = (Action) Lookup.lookupById("#CTL_MAXIMIZEDVIEWACTION").getClass().newInstance();
+                    final Action maximizedAction = (Action) Lookup.lookup("#CTL_MAXIMIZEDVIEWACTION").getClass().newInstance();
                     if (description.maximized()) {
                         view.addAction(maximizedAction);
                         view.getActionButton((String) maximizedAction.getValue(AbstractAction.NAME))
@@ -119,7 +119,7 @@ public class ViewFactory extends DockableFactory.Stub {
 
     public View createView(String dockableId) {
         if (dockableId != null) {
-            Object o = Lookup.lookupById(dockableId);
+            Object o = Lookup.lookup(dockableId);
             if (o != null && o instanceof TopComponent) {
                 return createView((TopComponent) o);
             }

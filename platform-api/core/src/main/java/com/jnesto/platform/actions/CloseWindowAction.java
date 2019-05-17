@@ -49,7 +49,7 @@ import org.pf4j.ExtensionPoint;
 //        position = 90000,
 //        separatorBefore = true
 //)
-@Extension
+@Extension (ordinal = 500)
 public class CloseWindowAction extends AbstractAction implements JMenuItemAction, ExtensionPoint {
 
     public CloseWindowAction() {

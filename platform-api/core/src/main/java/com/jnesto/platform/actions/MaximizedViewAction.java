@@ -35,7 +35,7 @@ import org.pf4j.ExtensionPoint;
 @ServiceProvider(
         id = "#CTL_MAXIMIZEDVIEWACTION"
 )
-@Extension
+@Extension (ordinal = 500)
 public class MaximizedViewAction extends AbstractAction implements ExtensionPoint {
 
     private ImageIcon arrowIn;

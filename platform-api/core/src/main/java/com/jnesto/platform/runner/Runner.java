@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.pf4j.Extension;
 import org.pf4j.ExtensionPoint;
 import org.pf4j.PluginManager;
 import org.pf4j.RuntimeMode;
@@ -53,7 +54,7 @@ public final class Runner {
     /**
      * Constrói um objeto Runner.
      *
-     * @param args matriz de argumentos String
+     * @param args matriz de argumentos String-
      */
     protected Runner(String[] args) {
         List<String> largs = Arrays.asList(args);
@@ -66,17 +67,6 @@ public final class Runner {
         if (largs.contains("--plugindir")) { //NOI18N
             pluginPath = Paths.get(largs.get(largs.indexOf("--plugindir") + 1)); //NOI18N
         }
-        initializeMessenger();
-        initializePluginManager();
-        initializeDaemons();
-    }
-
-    /**
-     * Inicializa a camada de mensagem.
-     *
-     */
-    protected void initializeMessenger() {
-        Lookup.register(MessengerSingleton.getInstance());
     }
 
     /**
@@ -85,11 +75,16 @@ public final class Runner {
      */
     protected void initializePluginManager() {
         PluginManager pluginManager;
-        Lookup.register(new PluginManagerService(pluginPath));
+
         if ((pluginManager = Lookup.lookup(PluginManager.class)) != null) {
             pluginManager.loadPlugins();
             pluginManager.startPlugins();
-            pluginManager.getExtensions(ExtensionPoint.class).forEach(ep -> Lookup.register(ep));
+            pluginManager.getExtensions(ExtensionPoint.class)
+                    .stream()
+                    .sorted((ea, eb) -> {
+                        return ((Integer) ea.getClass().getAnnotation(Extension.class).ordinal())
+                                .compareTo((Integer) eb.getClass().getAnnotation(Extension.class).ordinal());
+                    }).forEach(ep -> Lookup.register(ep));
         }
     }
 
@@ -138,6 +133,17 @@ public final class Runner {
                 });
     }
 
+    protected static void stopDaemons() {
+        Lookup.lookupAll(Daemon.class)
+                .stream()
+                .sorted((db, da) -> {
+                    return (da.getClass().getAnnotation(Daemon.Description.class)).priority().compareTo(
+                            (db.getClass().getAnnotation(Daemon.Description.class)).priority()
+                    );
+                })
+                .forEach((d) -> d.stop());
+    }
+
     /**
      * Busca e executa a classe de aplicação. No conjunto de plugins é
      * necessário que haja ao menos uma classe que instancie a classe
@@ -145,13 +151,24 @@ public final class Runner {
      *
      * @throws StartupExtensionPointNotFoundException
      */
-    protected void runApplication() throws StartupExtensionPointNotFoundException {
-        StartupExtensionPoint bep = Lookup.lookup(StartupExtensionPoint.class);
-        if (bep != null) {
-            bep.start();
-            return;
+    protected void start() throws StartupExtensionPointNotFoundException {
+        Lookup.register(MessengerSingleton.getInstance());
+        Lookup.register(new PluginManagerService(pluginPath));
+        initializePluginManager();
+        initializeDaemons();
+        if (Lookup.lookup(StartupExtensionPoint.class) == null) {
+            throw new StartupExtensionPointNotFoundException("StartupExtensionPoint class not found.");
         }
-        throw new StartupExtensionPointNotFoundException("StartupExtensionPoint class not found.");
+        Lookup.lookup(StartupExtensionPoint.class).start();
+    }
+
+    public static void stop() {
+        stopDaemons();
+        PluginManager pm = Lookup.lookup(PluginManager.class);
+        if (pm != null) {
+            pm.stopPlugins();
+        }
+        System.exit(0);
     }
 
     /**
@@ -162,9 +179,9 @@ public final class Runner {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                (new Runner(args)).runApplication();
+                (new Runner(args)).start();
             } catch (StartupExtensionPointNotFoundException ex) {
-                LoggerFactory.getLogger(Runner.class).error("{}", ex); //NOI18N
+                LoggerFactory.getLogger(Runner.class).error("StartupExtensionPointNotFoundException: {}", ex); //NOI18N
             }
         });
     }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.defaults.StandardBorderManager;
 import org.flexdock.docking.state.PersistenceException;
@@ -84,6 +85,14 @@ public class PerspectivePlatformManager {
         );
         try {
             DockingManager.loadLayoutModel();
+            DockingManager.getDockableIds().stream().forEach(id -> {
+                Dockable dockable = DockingManager.getDockable((String) id);
+                if(DockingManager.isDocked(dockable)) {
+                    if(dockable.getComponent() instanceof TopComponent) {
+                        ((TopComponent) dockable.getComponent()).onOpened();
+                    }
+                }
+            });
         } catch (IOException | PersistenceException e) {
             log.error(null, e);
         }

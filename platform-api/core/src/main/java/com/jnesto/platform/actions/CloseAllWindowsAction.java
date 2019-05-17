@@ -26,6 +26,7 @@ import javax.swing.AbstractAction;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.view.View;
+import org.pf4j.Extension;
 import org.pf4j.ExtensionPoint;
 
 /**
@@ -42,7 +43,7 @@ import org.pf4j.ExtensionPoint;
         position = 100000,
         separatorBefore = true
 )
-//@Extension
+@Extension (ordinal = 500)
 public class CloseAllWindowsAction extends AbstractAction implements JMenuItemAction, JToolBarAction, ExtensionPoint {
 
     public CloseAllWindowsAction() {
