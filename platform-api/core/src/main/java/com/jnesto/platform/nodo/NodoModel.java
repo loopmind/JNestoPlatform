@@ -22,8 +22,8 @@ import java.util.List;
  *
  * @author loopmind
  */
-public interface NodoConnector {
+public interface NodoModel {
     
-    NodoConnector addParameters(Object[] pars);
+    NodoModel addParameters(Object[] pars);
     List getNodos();
 }

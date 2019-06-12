@@ -90,7 +90,7 @@ public interface Nodo<E> extends Cloneable, Serializable {
 
     public void setChildsLoaded(boolean childsLoaded);
     
-    public void addFactory(NodoConnector factory);
+    public void addFactory(NodoModel factory);
     
-    public void removeFactory(NodoConnector factory);
+    public void removeFactory(NodoModel factory);
 }

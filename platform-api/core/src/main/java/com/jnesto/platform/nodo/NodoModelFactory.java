@@ -19,6 +19,6 @@ package com.jnesto.platform.nodo;
  *
  * @author loopmind
  */
-public interface NodoConnectorFactory {
-    NodoConnector getInstance();
+public interface NodoModelFactory {
+    NodoModel getInstance();
 }

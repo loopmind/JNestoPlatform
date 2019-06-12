@@ -36,7 +36,7 @@ public abstract class AbstractNodo<E> implements Nodo<E> {
     private Collection<NodoChildListener> nodoChildListeners;
     private Collection<NodoOwnerListener> nodoOwnerListeners;
     private List<Nodo<E>> childs;
-    private final Collection<NodoConnector> nodoConnector = new HashSet<>();
+    private final Collection<NodoModel> nodoConnector = new HashSet<>();
 
     
     public AbstractNodo(Nodo<E> owner, E cargo, boolean childsOnDemand) {
@@ -217,12 +217,12 @@ public abstract class AbstractNodo<E> implements Nodo<E> {
     }
 
     @Override
-    public void removeFactory(NodoConnector factory) {
+    public void removeFactory(NodoModel factory) {
         nodoConnector.remove(factory);
     }
 
     @Override
-    public void addFactory(NodoConnector factory) {
+    public void addFactory(NodoModel factory) {
         nodoConnector.add(factory);
     }
 

@@ -173,8 +173,8 @@ public final class Lookup {
      * <pre>{@code
      *  LookupConstraints lc = (s) -> s.isAvaliable();
      *
-     *  for(IMeuServico srv : Lookup.lookupAll(IMeuServico.class, lc) {
-     *      srv.facaAlgo();
+     *  for(IMyService srv : Lookup.lookupAll(IMyService.class, lc) {
+     *      srv.doSomething();
      *  }
      *  }</pre>
      *
